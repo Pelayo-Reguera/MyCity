@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MyCity</string>
+    <string name="title_activity_main" translatable="false">MainActivity</string>
+    <string name="nav_explore">Explorar</string>
+    <string name="nav_map">Mapa</string>
+    <string name="nav_profile">Perfil</string>
+</resources>
