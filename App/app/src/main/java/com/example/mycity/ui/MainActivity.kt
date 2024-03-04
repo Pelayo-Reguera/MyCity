@@ -1,15 +1,25 @@
 package com.example.mycity.ui
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.mycity.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
+/*
+* MyCity © 2024 by Pelayo Reguera García is licensed under
+* Attribution-NonCommercial-NoDerivatives 4.0 International.
+*
+* To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+* */
+
+/**
+ *
+ *  @author Pelayo Reguera García
+ * */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
