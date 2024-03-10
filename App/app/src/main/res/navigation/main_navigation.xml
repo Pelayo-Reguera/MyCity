@@ -12,14 +12,14 @@
         tools:layout="@layout/fragment_map" />
 
     <fragment
-        android:id="@+id/fragment_explore"
-        android:name="com.example.mycity.ui.explorer.ExplorerRecyclerFragment"
+        android:id="@+id/fragment_explorer"
+        android:name="com.example.mycity.ui.explorer.ExplorerEventsFragment"
         android:label="@string/nav_explore"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_events_explorer" />
 
     <fragment
         android:id="@+id/fragment_profile"
         android:name="com.example.mycity.ui.profile.ProfileFragment"
         android:label="@string/nav_profile"
-        tools:layout="@layout/fragment_explorer" />
+        tools:layout="@layout/fragment_profile" />
 </navigation>
