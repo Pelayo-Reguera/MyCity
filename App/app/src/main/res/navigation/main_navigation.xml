@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/fragment_explore"
-        android:name="com.example.mycity.ui.explorer.ExplorerFragment"
+        android:name="com.example.mycity.ui.explorer.ExplorerRecyclerFragment"
         android:label="@string/nav_explore"
         tools:layout="@layout/fragment_profile" />
 

@@ -17,6 +17,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 * */
 
 /**
+ * The first activity loaded when the app is opened. From here, a user will be able to do most of
+ * the things this app allows like:
+ * - Search events by name in the [ExplorerRecyclerFragment][com.example.mycity.ui.explorer.ExplorerRecyclerFragment]
+ * - See upcoming events around the user in the [MapFragment][com.example.mycity.ui.map.MapFragment]
+ * - See the user information like the number of MyPoints, followers, name...
  *
  *  @author Pelayo Reguera García
  * */
