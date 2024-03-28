@@ -1,20 +1,22 @@
+/*
+ * Copyright (c) 2024.
+ * MyCity © 2024 by Pelayo Reguera García is licensed under
+ * Attribution-NonCommercial-NoDerivatives 4.0 International.
+ *
+ * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+ */
+
 package com.example.mycity.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.mycity.R
 import com.example.mycity.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
-/*
-* MyCity © 2024 by Pelayo Reguera García is licensed under
-* Attribution-NonCommercial-NoDerivatives 4.0 International.
-*
-* To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
-* */
 
 /**
  * The first activity loaded when the app is opened. From here, a user will be able to do most of
@@ -43,10 +45,18 @@ class MainActivity : AppCompatActivity() {
 
         // It returns the navigation controller with the navigation graph ("main_navigation.xml") from
         // the NavHostFragment
-        val navController = binding.contentActivityMain.findNavController()
-        // We are setting the navigation graph to the action bar (the toolbar in this case)
-        // display correctly the titles and more things
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        val navController =
+            (supportFragmentManager.findFragmentById(R.id.content_activity_main) as NavHostFragment).navController
+        // Instead of setting the navigation graph to the action bar (the toolbar in this case)
+        // we are setting the three fragments that will be the main ones of the app in order to
+        // avoid showing the NavigateUp arrow in them
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.fragment_explorer,
+                R.id.fragment_map,
+                R.id.fragment_profile
+            )
+        )
         val navView: BottomNavigationView = binding.navView
         // appBarConfiguration is added in order to determine when the NavigateUp arrow should be
         // displayed

@@ -3,23 +3,44 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@+id/fragment_map">
+    app:startDestination="@+id/fragment_explorer">
 
     <fragment
         android:id="@+id/fragment_map"
         android:name="com.example.mycity.ui.map.MapFragment"
         android:label="@string/nav_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map">
+        <action
+            android:id="@+id/action_fragment_map_to_fragment_profile"
+            app:destination="@id/fragment_profile" />
+        <action
+            android:id="@+id/action_fragment_map_to_fragment_explorer"
+            app:destination="@id/fragment_explorer" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragment_explorer"
         android:name="com.example.mycity.ui.explorer.ExplorerEventsFragment"
         android:label="@string/nav_explore"
-        tools:layout="@layout/fragment_events_explorer" />
+        tools:layout="@layout/fragment_events_explorer">
+        <action
+            android:id="@+id/action_fragment_explorer_to_fragment_map"
+            app:destination="@id/fragment_map" />
+        <action
+            android:id="@+id/action_fragment_explorer_to_fragment_profile"
+            app:destination="@id/fragment_profile" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragment_profile"
         android:name="com.example.mycity.ui.profile.ProfileFragment"
         android:label="@string/nav_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_fragment_profile_to_fragment_map"
+            app:destination="@id/fragment_map" />
+        <action
+            android:id="@+id/action_fragment_profile_to_fragment_explorer"
+            app:destination="@id/fragment_explorer" />
+    </fragment>
 </navigation>
