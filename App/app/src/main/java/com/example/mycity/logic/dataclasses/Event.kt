@@ -1,6 +1,14 @@
+/*
+ * Copyright (c) 2024.
+ * MyCity © 2024 by Pelayo Reguera García is licensed under
+ * Attribution-NonCommercial-NoDerivatives 4.0 International.
+ *
+ * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+ */
+
 package com.example.mycity.logic.dataclasses
 
-import java.util.*
+import java.util.Date
 
 /**
  * It represents all the information an event created by an organizer can contain
