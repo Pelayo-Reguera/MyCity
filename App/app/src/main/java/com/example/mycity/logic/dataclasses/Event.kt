@@ -6,7 +6,7 @@ import java.util.*
  * It represents all the information an event created by an organizer can contain
  *
  * @property organizer The name of the user who organizes this event
- * @property name The name of the event
+ * @property title The name of the event
  * @property description
  * @property challenges A [MutableList] containing all activities that attendees can do during the event
  * @property location The place where the event is held
@@ -17,8 +17,8 @@ import java.util.*
  * @author Pelayo Reguera García
  * */
 data class Event(
-    val organizer: User,
-    val name: String,
+    val organizer: String,
+    val title: String,
     val description: String,
     val challenges: MutableList<Challenge>,
     val location: String,

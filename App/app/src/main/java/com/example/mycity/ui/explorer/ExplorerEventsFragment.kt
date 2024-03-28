@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2024.
+ * MyCity © 2024 by Pelayo Reguera García is licensed under
+ * Attribution-NonCommercial-NoDerivatives 4.0 International.
+ *
+ * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+ */
+
 package com.example.mycity.ui.explorer
 
 import android.os.Bundle
@@ -8,10 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mycity.R
 import com.example.mycity.databinding.FragmentEventsExplorerBinding
 import com.example.mycity.logic.dataclasses.Event
-import java.util.*
+import java.util.Date
 
 /**
- * [Fragment] containing a cards list of upcoming events
+ * [Fragment] containing a list of upcoming events cards
  *
  * @author Pelayo Reguera García
  * */
