@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="orange_background">#FFB951</color>
-    <color name="orange_focus">#F67952</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
+    <color name="orange1">#F0B000</color>
+    <color name="orange1_1">#D46800</color>
+    <color name="alternative_orange">#EA8202</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="orange_surface">#FFECDF</color>
+    <color name="yellow">#F0CE00</color>
+    <color name="brown">#BD8A08</color>
 </resources>
