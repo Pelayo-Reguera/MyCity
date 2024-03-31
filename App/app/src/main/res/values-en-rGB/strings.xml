@@ -5,4 +5,8 @@
     <string name="nav_map">Map</string>
     <string name="nav_profile">Profile</string>
     <string name="card_default_contentDescription">Event cover image</string>
+    <string name="img_event_description">Representative event image</string>
+    <string name="img_profile_description">User profile photo</string>
+    <string name="img_coin_description">MyCity coin image</string>
+    <string name="txtPoints">Points</string>
 </resources>

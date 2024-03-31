@@ -5,4 +5,9 @@
     <string name="nav_map">Mapa</string>
     <string name="nav_profile">Perfil</string>
     <string name="card_default_contentDescription">Imagen portada de tarjeta del evento</string>
+    <string name="img_event_description">Imagen representativa del evento</string>
+    <string name="img_profile_description">Foto de perfil del usuario</string>
+    <string name="img_coin_description">Imagen de la moneda MyCity</string>
+    <string name="txtPoints">Puntos</string>
+    <string name="txtUsername" translatable="false">\@username</string>
 </resources>
