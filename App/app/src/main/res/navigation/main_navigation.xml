@@ -11,10 +11,10 @@
         android:label="@string/nav_map"
         tools:layout="@layout/fragment_map">
         <action
-            android:id="@+id/action_fragment_map_to_fragment_profile"
+            android:id="@+id/to_fragment_profile"
             app:destination="@id/fragment_profile" />
         <action
-            android:id="@+id/action_fragment_map_to_fragment_explorer"
+            android:id="@+id/to_fragment_explorer"
             app:destination="@id/fragment_explorer" />
     </fragment>
 
@@ -24,11 +24,15 @@
         android:label="@string/nav_explore"
         tools:layout="@layout/fragment_events_explorer">
         <action
-            android:id="@+id/action_fragment_explorer_to_fragment_map"
+            android:id="@+id/to_fragment_map"
             app:destination="@id/fragment_map" />
         <action
-            android:id="@+id/action_fragment_explorer_to_fragment_profile"
+            android:id="@+id/to_fragment_profile"
             app:destination="@id/fragment_profile" />
+        <action
+            android:id="@+id/to_eventInfoFragment"
+            app:destination="@id/eventInfoFragment"
+            />
     </fragment>
 
     <fragment
@@ -37,10 +41,15 @@
         android:label="@string/nav_profile"
         tools:layout="@layout/fragment_profile">
         <action
-            android:id="@+id/action_fragment_profile_to_fragment_map"
+            android:id="@+id/to_fragment_map"
             app:destination="@id/fragment_map" />
         <action
-            android:id="@+id/action_fragment_profile_to_fragment_explorer"
+            android:id="@+id/to_fragment_explorer"
             app:destination="@id/fragment_explorer" />
     </fragment>
+    <fragment
+        android:id="@+id/eventInfoFragment"
+        android:name="com.example.mycity.ui.explorer.event.EventInfoFragment"
+        android:label="fragment_event_info"
+        tools:layout="@layout/fragment_event_info" />
 </navigation>
