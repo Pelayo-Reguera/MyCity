@@ -8,9 +8,9 @@
         <item name="colorOnPrimaryContainer">@color/white</item>
         <item name="colorPrimaryVariant">@color/alternative_orange</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/brown</item>
+        <item name="colorSecondary">@color/black</item>
         <item name="colorOnSecondary">@color/brown</item>
-        <item name="colorSecondaryContainer">@color/brown</item>
+        <item name="colorSecondaryContainer">@color/transparent_brown</item>
         <item name="colorOnSecondaryContainer">@color/brown</item>
         <item name="colorSecondaryVariant">@color/brown</item>
         <!-- Ternary brand color. -->
