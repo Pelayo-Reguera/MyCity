@@ -10,8 +10,10 @@ package com.example.mycity.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.mycity.R
@@ -30,6 +32,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,12 +49,12 @@ class MainActivity : AppCompatActivity() {
 
         // It returns the navigation controller with the navigation graph ("main_navigation.xml") from
         // the NavHostFragment
-        val navController =
+        navController =
             (supportFragmentManager.findFragmentById(R.id.content_activity_main) as NavHostFragment).navController
         // Instead of setting the navigation graph to the action bar (the toolbar in this case)
         // we are setting the three fragments that will be the main ones of the app in order to
         // avoid showing the NavigateUp arrow in them
-        val appBarConfiguration = AppBarConfiguration(
+        appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.fragment_explorer,
                 R.id.fragment_map,
@@ -61,8 +65,12 @@ class MainActivity : AppCompatActivity() {
         // appBarConfiguration is added in order to determine when the NavigateUp arrow should be
         // displayed
         setupActionBarWithNavController(navController, appBarConfiguration)
-        // The navVew is also configured with the navController to show the fragment corresponding
+        // The navView is also configured with the navController to show the fragment corresponding
         // to the icon pressed
         navView.setupWithNavController(navController)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }
