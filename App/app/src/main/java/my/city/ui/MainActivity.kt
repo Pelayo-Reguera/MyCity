@@ -23,8 +23,8 @@ import my.city.databinding.ActivityMainBinding
 /**
  * The first activity loaded when the app is opened. From here, a user will be able to do most of
  * the things this app allows like:
- * - Search events by name in the [ExplorerRecyclerFragment][com.example.mycity.ui.explorer.ExplorerEventsFragment]
- * - See upcoming events around the user in the [MapFragment][com.example.mycity.ui.map.MapFragment]
+ * - Search events by name in the [ExplorerRecyclerFragment][my.city.ui.explorer.ExplorerEventsFragment]
+ * - See upcoming events around the user in the [MapFragment][my.city.ui.map.MapFragment]
  * - See the user information like the number of MyPoints, followers, name...
  *
  *  @author Pelayo Reguera García
