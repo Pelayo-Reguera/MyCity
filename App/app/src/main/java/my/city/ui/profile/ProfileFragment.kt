@@ -6,13 +6,17 @@
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
  */
 
-package com.example.mycity.ui.profile
+package my.city.ui.profile
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.example.mycity.R
-import com.example.mycity.databinding.FragmentProfileBinding
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import my.city.R
+import my.city.databinding.FragmentProfileBinding
+import my.city.logic.viewmodels.UserVM
 
 /**
  * A simple [Fragment] subclass for showing user profile information
@@ -25,11 +29,15 @@ import com.example.mycity.databinding.FragmentProfileBinding
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     private lateinit var binding: FragmentProfileBinding
+    private val user: UserVM by lazy { UserVM() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Use the static method from the class binding .bind(<<view>>) when the view is already
         // inflated and we want again an instance of the class binding
         binding = FragmentProfileBinding.bind(view)
+        lifecycleScope.launch(Dispatchers.IO) {
+            binding.txtUsername.text = user.getUser()
+        }
     }
 }
