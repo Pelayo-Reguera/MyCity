@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@+id/fragment_explorer">
+    app:startDestination="@id/fragment_explorer">
 
     <fragment
         android:id="@+id/fragment_map"
-        android:name="com.example.mycity.ui.map.MapFragment"
+        android:name="my.city.ui.map.MapFragment"
         android:label="@string/nav_map"
         tools:layout="@layout/fragment_map">
         <action
@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/fragment_explorer"
-        android:name="com.example.mycity.ui.explorer.ExplorerEventsFragment"
+        android:name="my.city.ui.explorer.ExplorerEventsFragment"
         android:label="@string/nav_explore"
         tools:layout="@layout/fragment_events_explorer">
         <action
@@ -37,7 +37,7 @@
 
     <fragment
         android:id="@+id/fragment_profile"
-        android:name="com.example.mycity.ui.profile.ProfileFragment"
+        android:name="my.city.ui.profile.ProfileFragment"
         android:label="@string/nav_profile"
         tools:layout="@layout/fragment_profile">
         <action
@@ -49,7 +49,7 @@
     </fragment>
     <fragment
         android:id="@+id/eventInfoFragment"
-        android:name="com.example.mycity.ui.explorer.event.EventInfoFragment"
+        android:name="my.city.ui.explorer.event.EventInfoFragment"
         android:label="fragment_event_info"
         tools:layout="@layout/fragment_event_info" />
 </navigation>

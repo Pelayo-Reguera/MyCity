@@ -6,7 +6,7 @@
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
  */
 
-package com.example.mycity.ui
+package my.city.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -16,9 +16,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.mycity.R
-import com.example.mycity.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import my.city.R
+import my.city.databinding.ActivityMainBinding
 
 /**
  * The first activity loaded when the app is opened. From here, a user will be able to do most of

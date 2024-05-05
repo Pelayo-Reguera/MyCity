@@ -6,7 +6,7 @@
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
  */
 
-package com.example.mycity.ui.explorer
+package my.city.ui.explorer
 
 import android.view.LayoutInflater
 import android.view.View
@@ -15,8 +15,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mycity.R
-import com.example.mycity.logic.dataclasses.Event
+import my.city.R
+import my.city.logic.Event
 
 /**
  * This class is in charge of generating components based on a layout which later will be
@@ -37,7 +37,7 @@ class ExplorerAdapter(private val eventsList: List<Event>) :
 
         fun bindEvent(event: Event) {
             eventTitle.text = event.title
-            eventSubTitle.text = event.organizer
+            eventSubTitle.text = event.organizers[0].userName
         }
     }
 
