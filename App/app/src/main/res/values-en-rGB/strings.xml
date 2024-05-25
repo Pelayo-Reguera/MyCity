@@ -9,4 +9,8 @@
     <string name="img_profile_description">User profile photo</string>
     <string name="img_coin_description">MyCity coin image</string>
     <string name="txtPoints">Points</string>
+    <string name="fabEventInfo">Button to register in the event</string>
+    <string name="tabiInfo">INFO</string>
+    <string name="tabiChallenge">CHALLENGES</string>
+    <string name="nav_event">Event</string>
 </resources>
