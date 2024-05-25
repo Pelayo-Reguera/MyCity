@@ -12,6 +12,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.explorer.event.EventInfoFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/orange_surface">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="14dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txtInfoTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
+            tools:text="Los40 Music Awards" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txtInfoDateAndHour"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            tools:text="00:00 22/12/2024" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txtInfoOrganizers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            tools:text="María Santana" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txtInfoLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            tools:text="Madrid, Spain" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:dividerThickness="2dp"
+            android:layout_marginTop="8dp" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txtInfoDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            tools:text="@string/large_text" />
+    </LinearLayout>
 </androidx.core.widget.NestedScrollView>

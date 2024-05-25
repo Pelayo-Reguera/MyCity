@@ -23,5 +23,6 @@ class EventInfoFragment : Fragment(R.layout.fragment_event_info) {
         // Use the static method from the class binding .bind(<<view>>) when the view is already
         // inflated and we want again an instance of the class binding
         binding = FragmentEventInfoBinding.bind(view)
+        binding.txtInfoDescription.text = getString(R.string.large_text)
     }
 }
