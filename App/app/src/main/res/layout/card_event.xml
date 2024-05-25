@@ -1,40 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cvEvent"
-    android:layout_width="210dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="16dp"
     android:clickable="true"
-    android:padding="8dp"
     android:textAlignment="textStart"
-    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.ExtraLarge"
-    app:contentPaddingLeft="16dp"
-    app:contentPaddingRight="16dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    android:layout_margin="6dp"
+    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.ExtraLarge">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgEvent"
             android:layout_width="match_parent"
             android:layout_height="194dp"
             android:contentDescription="@string/img_event_description"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.ExtraLarge"
+            app:srcCompat="@drawable/img_default_party" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingTop="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
             <!-- Title, secondary and supporting text -->
             <TextView
@@ -42,40 +46,66 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
+                tools:text="Title visible only from the design view"
                 />
 
-            <TextView
-                android:id="@+id/txtSubTitle"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:attr/textColorSecondary"
-                />
+                android:layout_marginTop="8dp">
 
-            <TextView
-                android:id="@+id/txtDescription"
-                android:layout_width="wrap_content"
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    app:srcCompat="@drawable/baseline_watch_later_24" />
+
+                <TextView
+                    android:id="@+id/txtSubTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?android:attr/textColorSecondary"
+                    tools:text="23:30 - 06/05/2024"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:attr/textColorSecondary"
-                />
+                android:layout_marginTop="3dp">
 
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    app:srcCompat="@drawable/baseline_location_on_20"
+                    />
+
+                <TextView
+                    android:id="@+id/txtDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?android:attr/textColorSecondary"
+                    tools:text="Street Santa María de Cristana, 16"
+                    />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Buttons -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_margin="10dp"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAttendance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                />
+                tools:text="Join" />
         </LinearLayout>
 
     </LinearLayout>
