@@ -11,6 +11,7 @@ package my.city.ui.profile
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,7 +30,9 @@ import my.city.logic.viewmodels.UserVM
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     private lateinit var binding: FragmentProfileBinding
-    private val user: UserVM by lazy { UserVM() }
+
+    // The ViewModel of its activity container is retrieved. In this case the UserVM
+    private val user: UserVM by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

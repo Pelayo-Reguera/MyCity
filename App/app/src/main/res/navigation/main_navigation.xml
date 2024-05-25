@@ -30,8 +30,8 @@
             android:id="@+id/to_fragment_profile"
             app:destination="@id/fragment_profile" />
         <action
-            android:id="@+id/to_eventInfoFragment"
-            app:destination="@id/eventInfoFragment"
+            android:id="@+id/to_fragment_event"
+            app:destination="@id/fragment_event"
             />
     </fragment>
 
@@ -48,8 +48,8 @@
             app:destination="@id/fragment_explorer" />
     </fragment>
     <fragment
-        android:id="@+id/eventInfoFragment"
-        android:name="my.city.ui.explorer.event.EventInfoFragment"
-        android:label="fragment_event_info"
-        tools:layout="@layout/fragment_event_info" />
+        android:id="@+id/fragment_event"
+        android:name="my.city.ui.explorer.event.EventFragment"
+        android:label="@string/nav_event"
+        tools:layout="@layout/fragment_event" />
 </navigation>

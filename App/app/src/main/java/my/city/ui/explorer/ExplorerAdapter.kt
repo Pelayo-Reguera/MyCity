@@ -15,8 +15,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import my.city.R
 import my.city.logic.Event
+import java.time.format.DateTimeFormatter
 
 /**
  * This class is in charge of generating components based on a layout which later will be
@@ -31,13 +33,18 @@ class ExplorerAdapter(private val eventsList: List<Event>) :
      */
     class EventViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val eventTitle: TextView = view.findViewById(R.id.txtTitle)
-        private val eventSubTitle: TextView = view.findViewById(R.id.txtSubTitle)
-        private val eventImg: ImageView = view.findViewById(R.id.imgEvent)
+        private val imgEvent: ImageView = view.findViewById(R.id.imgEvent)
+        private val txtTitle: TextView = view.findViewById(R.id.txtTitle)
+        private val txtSubTitle: TextView = view.findViewById(R.id.txtSubTitle)
+        private val txtDescription: TextView = view.findViewById(R.id.txtDescription)
+        private val btnAttendance: MaterialButton = view.findViewById(R.id.btnAttendance)
 
         fun bindEvent(event: Event) {
-            eventTitle.text = event.title
-            eventSubTitle.text = event.organizers[0].userName
+            txtTitle.text = event.title
+            txtSubTitle.text =
+                event.startEvent.format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
+            txtDescription.text = event.location.street
+            btnAttendance.text = "Join"
         }
     }
 
@@ -48,7 +55,7 @@ class ExplorerAdapter(private val eventsList: List<Event>) :
             .inflate(R.layout.card_event, viewGroup, false)
 
         view.setOnClickListener { card ->
-            card.findNavController().navigate(R.id.to_eventInfoFragment)
+            card.findNavController().navigate(R.id.to_fragment_event)
         }
 
         return EventViewHolder(view)

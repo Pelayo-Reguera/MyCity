@@ -9,7 +9,7 @@
 package my.city.logic
 
 import com.google.firebase.firestore.GeoPoint
-import java.util.Date
+import java.time.LocalDateTime
 
 /**
  * It represents all the information a challenge created for a specific event can contain
@@ -43,8 +43,8 @@ data class Event(
     val description: String,
     val challenges: MutableList<Challenge>,
     val location: Location,
-    val startEvent: Date,
-    val endEvent: Date,
+    val startEvent: LocalDateTime,
+    val endEvent: LocalDateTime,
     val guests: MutableList<User>
 )
 //TODO: Get the data from the database
@@ -63,7 +63,7 @@ data class Location(val geoPoint: GeoPoint, val street: String)
  * @author Pelayo Reguera García
  * */
 data class User(
-    val userName: String,
+    var userName: String,
     val email: String,
     val likedEvents: MutableList<Event>,
     val coins: MutableMap<String, Int>,

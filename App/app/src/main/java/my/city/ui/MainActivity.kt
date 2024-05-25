@@ -9,6 +9,7 @@
 package my.city.ui
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -19,6 +20,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import my.city.R
 import my.city.databinding.ActivityMainBinding
+import my.city.logic.viewmodels.UserVM
 
 /**
  * The first activity loaded when the app is opened. From here, a user will be able to do most of
@@ -34,6 +36,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
+
+    // Its initialization is delegated to viewModels() to determine its scope to the activity in this
+    // case. It doesn't work if the default constructor of userVM o ViewModel() is used
+    private val user: UserVM by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
