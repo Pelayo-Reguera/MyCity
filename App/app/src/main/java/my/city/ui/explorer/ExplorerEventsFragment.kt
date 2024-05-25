@@ -6,17 +6,19 @@
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
  */
 
-package com.example.mycity.ui.explorer
+package my.city.ui.explorer
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mycity.R
-import com.example.mycity.databinding.FragmentEventsExplorerBinding
-import com.example.mycity.logic.dataclasses.Event
-import java.util.Date
+import com.google.firebase.firestore.GeoPoint
+import my.city.R
+import my.city.databinding.FragmentEventsExplorerBinding
+import my.city.logic.Event
+import my.city.logic.Location
+import my.city.logic.User
+import java.time.LocalDateTime
 
 /**
  * [Fragment] containing a list of upcoming events cards
@@ -37,25 +39,40 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
         // Use the static method from the class binding .bind(<<view>>) when the view is already
         // inflated and we want again an instance of the class binding
         binding = FragmentEventsExplorerBinding.bind(view)
-//        binding = FragmentEventsRecyclerBinding.inflate(inflater)
         rvEvents = binding.rvEvents
         rvEvents.setHasFixedSize(true)
 
-        val layoutManager = GridLayoutManager(context, 2)
-        rvEvents.layoutManager = layoutManager
-
-        val eventsList = mutableListOf<Event>(
+        //TODO: Extract events from the database
+        val eventsList: MutableList<Event> = mutableListOf(
             Event(
-                "a", "Evento1", "Evento de ejemplo", mutableListOf(), "Mi casa",
-                Date(), Date(), mutableListOf()
+                "Los40 Music awards",
+                mutableListOf(User("User1", "email1@gmail.com", mutableListOf(), mutableMapOf())),
+                "Evento de ejemplo",
+                mutableListOf(),
+                Location(GeoPoint(0.0, 0.0), "Mi casa"),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                mutableListOf(),
             ),
             Event(
-                "a", "Evento1", "Evento de ejemplo", mutableListOf(), "Mi casa",
-                Date(), Date(), mutableListOf()
+                "b",
+                mutableListOf(User("User1", "email1@gmail.com", mutableListOf(), mutableMapOf())),
+                "Evento de ejemplo",
+                mutableListOf(),
+                Location(GeoPoint(0.0, 0.0), "Mi casa"),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                mutableListOf(),
             ),
             Event(
-                "a", "Evento1", "Evento de ejemplo", mutableListOf(), "Mi casa",
-                Date(), Date(), mutableListOf()
+                "c",
+                mutableListOf(User("User1", "email1@gmail.com", mutableListOf(), mutableMapOf())),
+                "Evento de ejemplo",
+                mutableListOf(),
+                Location(GeoPoint(0.0, 0.0), "Mi casa"),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                mutableListOf(),
             )
         )
         val eventsAdapter = ExplorerAdapter(eventsList)
