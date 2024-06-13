@@ -24,8 +24,7 @@
             android:name=".ui.MainActivity"
             android:exported="true"
             android:label="@string/title_activity_main"
-            android:theme="@style/Theme.MyCity.NoActionBar">
-
+            android:theme="@style/Theme.MyCity.NoActionBar.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

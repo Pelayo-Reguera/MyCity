@@ -1,3 +1,11 @@
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+
 <resources>
     <!-- Base application theme. -->
     <style name="Theme.MyCity" parent="Theme.Material3.DynamicColors.Light">
@@ -29,6 +37,12 @@
     <style name="Theme.MyCity.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.MyCity.NoActionBar.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_screen</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/Theme.MyCity</item>
     </style>
 
     <style name="Theme.MyCity.AppBarOverlay"

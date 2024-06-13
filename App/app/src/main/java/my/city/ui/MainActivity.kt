@@ -11,13 +11,18 @@ package my.city.ui
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import my.city.R
 import my.city.databinding.ActivityMainBinding
 import my.city.logic.viewmodels.UserVM
@@ -36,14 +41,25 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
-
     // Its initialization is delegated to viewModels() to determine its scope to the activity in this
-    // case. It doesn't work if the default constructor of userVM o ViewModel() is used
-    private val user: UserVM by viewModels()
+    // case. It doesn't work if the default constructor of userVM or ViewModel() is used
+    private val userVm: UserVM by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        //INFO: Try to improve the splash screen using an animated icon
+        installSplashScreen()
+        runBlocking {
+            launch {
+                userVm.signInLauncher = registerForActivityResult(
+                    FirebaseAuthUIActivityResultContract(),
+                ) { res ->
+                    userVm.onSignInResult(res)
+                }
+            }
+            delay(1000)
+        }
 
+        super.onCreate(savedInstanceState)
         //It creates an instance of the binding class between this class and the corresponding xml file
         binding = ActivityMainBinding.inflate(layoutInflater)
         //root is the outermost layout of the referenced xml
@@ -62,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         // avoid showing the NavigateUp arrow in them
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.fragment_explorer,
+                R.id.fragment_events_explorer,
                 R.id.fragment_map,
                 R.id.fragment_profile
             )
@@ -74,6 +90,11 @@ class MainActivity : AppCompatActivity() {
         // The navView is also configured with the navController to show the fragment corresponding
         // to the icon pressed
         navView.setupWithNavController(navController)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        userVm.signIn()
     }
 
     override fun onSupportNavigateUp(): Boolean {
