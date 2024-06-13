@@ -1,3 +1,11 @@
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
@@ -5,4 +13,10 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="img_recycler_view_item">40dp</dimen>
+    <dimen name="card_view_vertical_padding">8dp</dimen>
+    <dimen name="icon_button">44dp</dimen>
+    <dimen name="dialog_actions_marginTop">24dp</dimen>
+    <dimen name="dialog_padding_between_actions">8dp</dimen>
+    <dimen name="dialog_padding">24dp</dimen>
 </resources>
