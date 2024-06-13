@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+
 <resources>
     <color name="orange1">#F0B000</color>
     <color name="orange1_1">#D46800</color>
@@ -9,4 +17,5 @@
     <color name="yellow">#F0CE00</color>
     <color name="brown">#7C5900</color>
     <color name="transparent_brown">#32BD8A08</color>
+    <color name="red">#D50000</color>
 </resources>
