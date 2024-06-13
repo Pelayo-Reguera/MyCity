@@ -11,13 +11,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.explorer.event.challenges.EventChallengesFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvChallenges"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/card_challenge" />
+    <include
+        android:id="@+id/layout_rvChallenges"
+        layout="@layout/rv_event_challenges" />
 </FrameLayout>
