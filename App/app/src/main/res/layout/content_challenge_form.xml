@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/orange_surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxWidth="400dp"
+            app:counterMaxLength="@integer/name_legth"
+            app:counterEnabled="true"
+            android:layout_marginBottom="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txteChallengeName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxLength="@integer/name_legth"
+                android:hint="@string/challenge_form_txteChallengeName"
+                android:inputType="text|textPersonName"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxWidth="400dp"
+            android:layout_marginVertical="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txteChallengeReward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="150dp"
+                android:hint="@string/challenge_form_txteChallengeReward"
+                android:inputType="number"
+                android:maxHeight="500dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxWidth="400dp"
+            android:layout_marginTop="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txteChallengeDescription"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/txteDescription"
+                android:inputType="text|textMultiLine"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

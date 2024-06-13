@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/orange_surface">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="24dp"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxWidth="400dp"
+                app:counterMaxLength="@integer/name_legth"
+                app:counterEnabled="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txteEventName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:maxLength="@integer/name_legth"
+                    android:hint="@string/event_form_txteEventName"
+                    android:inputType="text|textPersonName"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxWidth="400dp"
+                android:layout_marginVertical="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txteEventDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="500dp"
+                    android:hint="@string/txteDescription"
+                    android:inputType="text|textLongMessage|textMultiLine" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxWidth="400dp"
+                android:layout_marginVertical="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txteEventLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/event_form_txteEventLocation"
+                    android:inputType="text|textPostalAddress"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="10dp"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:maxWidth="400dp"
+                    android:layout_marginEnd="10dp"
+                    app:startIconDrawable="@drawable/outline_calendar_month_24">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/txteEventStartDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="@string/event_form_txteEventStartDate"
+                        android:inputType="datetime"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:maxWidth="300dp"
+                    android:layout_marginStart="10dp"
+                    app:startIconDrawable="@drawable/outline_calendar_month_24">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/txteEventEndDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="@string/event_form_txteEventEndDate"
+                        android:inputType="datetime"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start|center_vertical"
+                    android:text="@string/event_form_txtEventChallenges"
+                    style="@style/TextAppearance.Material3.TitleLarge" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btniAddChallenge"
+                    android:layout_width="@dimen/icon_button"
+                    android:layout_height="@dimen/icon_button"
+                    android:layout_gravity="end|center_vertical"
+                    style="@style/Widget.Material3.Button.IconButton"
+                    app:icon="@drawable/baseline_add_box_24" />
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+            <include
+                android:id="@+id/layout_rvChallenges"
+                layout="@layout/rv_event_challenges"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginBottom="10dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/efabReady"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:text="@string/event_form_fabEventCreate"
+        android:textSize="18sp"
+        app:icon="@drawable/baseline_check_24"
+        android:layout_gravity="bottom|end" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

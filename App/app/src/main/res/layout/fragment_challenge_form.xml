@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/orange_surface">
+
+    <include
+        android:id="@+id/content_challenge_form"
+        layout="@layout/content_challenge_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/dialog_padding" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/efabChallengeReady"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:text="@string/event_form_fabEventCreate"
+        android:textSize="18sp"
+        app:icon="@drawable/baseline_check_24"
+        android:layout_gravity="bottom|end" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
