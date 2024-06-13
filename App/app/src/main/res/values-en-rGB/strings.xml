@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+
 <resources>
     <string name="app_name">MyCity</string>
     <string name="nav_explore">Explore</string>
@@ -13,4 +21,17 @@
     <string name="tabiInfo">INFO</string>
     <string name="tabiChallenge">CHALLENGES</string>
     <string name="nav_event">Event</string>
+    <string name="nav_event_creation">Create event</string>
+    <string name="event_form_txteEventName">Name of the event</string>
+    <string name="txteDescription">Description</string>
+    <string name="event_form_txteEventLocation">Location</string>
+    <string name="event_form_txteEventStartDate">Start</string>
+    <string name="event_form_txteEventEndDate">End</string>
+    <string name="event_form_txtEventChallenges">Challenges</string>
+    <string name="event_form_fabEventCreate">Ready!</string>
+    <string name="challenge_form_txteChallengeReward">Reward</string>
+    <string name="challenge_form_txteChallengeName">Name of the challenge</string>
+    <string name="btnAccept">Accept</string>
+    <string name="btnCancel">Cancel</string>
+    <string name="nav_challenge_creation">Create challenge</string>
 </resources>

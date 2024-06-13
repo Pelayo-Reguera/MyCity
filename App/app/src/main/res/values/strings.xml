@@ -1,6 +1,14 @@
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+
 <resources>
     <string name="app_name">MyCity</string>
-    <string name="title_activity_main" translatable="false">MainActivity</string>
+    <string name="title_activity_main" translatable="false">MyCity</string>
     <string name="nav_explore">Explorar</string>
     <string name="nav_map">Mapa</string>
     <string name="nav_profile">Perfil</string>
@@ -9,8 +17,9 @@
     <string name="img_profile_description">Foto de perfil del usuario</string>
     <string name="img_coin_description">Imagen de la moneda MyCity</string>
     <string name="txtPoints">Puntos</string>
-    <string name="txtUsername" translatable="false">\@username</string>
+    <string name="txtUsername" translatable="false">\@anonymous</string>
     <string name="title_activity_scrolling" translatable="false">ScrollingActivity</string>
+    <string name="txteDescription">Descripción</string>
     <string name="large_text" translatable="false">
         "Material is the metaphor.\n\n"
 
@@ -107,4 +116,26 @@
     <string name="nav_event">Evento</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <!--    Context-dependent text-->
+    <string name="nav_event_creation">Crear evento</string>
+    <string name="event_form_txteEventName">Nombre del evento</string>
+    <string name="event_form_txteEventLocation">Ubicación</string>
+    <string name="event_form_txteEventStartDate">Inicio</string>
+    <string name="event_form_txteEventEndDate">Fin</string>
+    <string name="event_form_txtEventChallenges">Retos</string>
+    <string name="event_form_fabEventCreate">¡Listo!</string>
+    <string name="challenge_form_txteChallengeReward">Premio</string>
+    <string name="challenge_form_txteChallengeName">Nombre del reto</string>
+    <string name="btnAccept">Aceptar</string>
+    <string name="btnCancel">Cancelar</string>
+    <string name="nav_challenge_creation">Crear reto</string>
 </resources>
