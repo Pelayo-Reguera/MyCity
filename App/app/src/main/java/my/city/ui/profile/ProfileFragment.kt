@@ -32,7 +32,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private lateinit var binding: FragmentProfileBinding
 
     // The ViewModel of its activity container is retrieved. In this case the UserVM
-    private val user: UserVM by activityViewModels()
+    private val userVm: UserVM by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,7 +40,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         // inflated and we want again an instance of the class binding
         binding = FragmentProfileBinding.bind(view)
         lifecycleScope.launch(Dispatchers.IO) {
-            binding.txtUsername.text = user.getUser()
+            if (!userVm.user.isAnonymous) {
+                binding.txtUsername.text = userVm.user.userName
+            }
         }
     }
 }
