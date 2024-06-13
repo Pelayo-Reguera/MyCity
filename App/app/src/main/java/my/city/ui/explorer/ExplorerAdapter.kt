@@ -40,7 +40,7 @@ class ExplorerAdapter(private val eventsList: List<Event>) :
         private val btnAttendance: MaterialButton = view.findViewById(R.id.btnAttendance)
 
         fun bindEvent(event: Event) {
-            txtTitle.text = event.title
+            txtTitle.text = event.name
             txtSubTitle.text =
                 event.startEvent.format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
             txtDescription.text = event.location.street

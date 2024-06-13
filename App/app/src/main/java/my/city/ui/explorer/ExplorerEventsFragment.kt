@@ -11,6 +11,7 @@ package my.city.ui.explorer
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.GeoPoint
 import my.city.R
@@ -46,7 +47,15 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
         val eventsList: MutableList<Event> = mutableListOf(
             Event(
                 "Los40 Music awards",
-                mutableListOf(User("User1", "email1@gmail.com", mutableListOf(), mutableMapOf())),
+                mutableListOf(
+                    User(
+                        "User1",
+                        "email1@gmail.com",
+                        "photoURL",
+                        mutableListOf(),
+                        mutableMapOf()
+                    )
+                ),
                 "Evento de ejemplo",
                 mutableListOf(),
                 Location(GeoPoint(0.0, 0.0), "Mi casa"),
@@ -56,7 +65,15 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
             ),
             Event(
                 "b",
-                mutableListOf(User("User1", "email1@gmail.com", mutableListOf(), mutableMapOf())),
+                mutableListOf(
+                    User(
+                        "User1",
+                        "email1@gmail.com",
+                        "photoURL",
+                        mutableListOf(),
+                        mutableMapOf()
+                    )
+                ),
                 "Evento de ejemplo",
                 mutableListOf(),
                 Location(GeoPoint(0.0, 0.0), "Mi casa"),
@@ -66,7 +83,15 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
             ),
             Event(
                 "c",
-                mutableListOf(User("User1", "email1@gmail.com", mutableListOf(), mutableMapOf())),
+                mutableListOf(
+                    User(
+                        "User1",
+                        "email1@gmail.com",
+                        "photoURL",
+                        mutableListOf(),
+                        mutableMapOf()
+                    )
+                ),
                 "Evento de ejemplo",
                 mutableListOf(),
                 Location(GeoPoint(0.0, 0.0), "Mi casa"),
@@ -77,5 +102,8 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
         )
         val eventsAdapter = ExplorerAdapter(eventsList)
         rvEvents.adapter = eventsAdapter
+        binding.fabCreateEvent.setOnClickListener {
+            findNavController().navigate(ExplorerEventsFragmentDirections.toEventFormNavigation())
+        }
     }
 }

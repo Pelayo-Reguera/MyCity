@@ -56,16 +56,16 @@
         android:id="@+id/vpContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         app:layout_anchor="@+id/appbar"
-        app:layout_anchorGravity="bottom" />
+        app:layout_anchorGravity="bottom|center"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:src="@drawable/outline_celebration_30"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/fab_margin"
         android:contentDescription="@string/fabEventInfo"
         app:maxImageSize="30dp" />
 

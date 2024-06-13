@@ -1,7 +1,15 @@
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/fragment_explorer"
+        android:id="@+id/fragment_events_explorer"
         android:icon="@drawable/ic_baseline_travel_explore_24"
         android:title="@string/nav_explore" />
 

@@ -27,7 +27,7 @@ data class Challenge(val name: String, val description: String, val coinID: Stri
  * It represents all the information an event created by an organizer can contain
  *
  * @property organizer The name of the user who organizes this event
- * @property title The name of the event
+ * @property name The name of the event
  * @property description
  * @property challenges A [MutableList] containing all activities that attendees can do during the event
  * @property location The place where the event is held
@@ -38,7 +38,7 @@ data class Challenge(val name: String, val description: String, val coinID: Stri
  * @author Pelayo Reguera García
  * */
 data class Event(
-    val title: String,
+    val name: String,
     val organizers: MutableList<User>,
     val description: String,
     val challenges: MutableList<Challenge>,
@@ -54,8 +54,10 @@ data class Location(val geoPoint: GeoPoint, val street: String)
 /**
  * It represents an User with all the information attached to it
  *
- * @property id
+ * @property isAnonymous
  * @property userName
+ * @property email
+ * @property photoUrl
  * @property likedEvents A [MutableList] containing all the events that the user like or is register
  * as an attendant
  * @property coins A [MutableList] containing the quantities of each coin type in the user's possession
@@ -63,8 +65,10 @@ data class Location(val geoPoint: GeoPoint, val street: String)
  * @author Pelayo Reguera García
  * */
 data class User(
-    var userName: String,
+    val userName: String,
     val email: String,
+    val photoUrl: String,
     val likedEvents: MutableList<Event>,
     val coins: MutableMap<String, Int>,
+    val isAnonymous: Boolean = false,
 )
