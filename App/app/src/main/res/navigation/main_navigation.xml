@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/fragment_explorer">
+    app:startDestination="@id/fragment_events_explorer">
 
     <fragment
         android:id="@+id/fragment_map"
@@ -15,11 +22,11 @@
             app:destination="@id/fragment_profile" />
         <action
             android:id="@+id/to_fragment_explorer"
-            app:destination="@id/fragment_explorer" />
+            app:destination="@id/fragment_events_explorer" />
     </fragment>
 
     <fragment
-        android:id="@+id/fragment_explorer"
+        android:id="@+id/fragment_events_explorer"
         android:name="my.city.ui.explorer.ExplorerEventsFragment"
         android:label="@string/nav_explore"
         tools:layout="@layout/fragment_events_explorer">
@@ -33,6 +40,9 @@
             android:id="@+id/to_fragment_event"
             app:destination="@id/fragment_event"
             />
+        <action
+            android:id="@+id/to_event_form_navigation"
+            app:destination="@id/event_form_navigation" />
     </fragment>
 
     <fragment
@@ -45,11 +55,64 @@
             app:destination="@id/fragment_map" />
         <action
             android:id="@+id/to_fragment_explorer"
-            app:destination="@id/fragment_explorer" />
+            app:destination="@id/fragment_events_explorer" />
     </fragment>
     <fragment
         android:id="@+id/fragment_event"
         android:name="my.city.ui.explorer.event.EventFragment"
         android:label="@string/nav_event"
         tools:layout="@layout/fragment_event" />
+
+    <navigation
+        android:id="@+id/event_form_navigation"
+        app:startDestination="@id/fragment_event_form">
+        <fragment
+            android:id="@+id/fragment_event_form"
+            android:name="my.city.ui.explorer.event.EventFormFragment"
+            android:label="@string/nav_event_creation"
+            tools:layout="@layout/fragment_event_form">
+            <action
+                android:id="@+id/to_fragment_explorer"
+                app:destination="@id/fragment_events_explorer" />
+            <action
+                android:id="@+id/to_challengeFormFragmentDialog"
+                app:destination="@id/challengeFormFragmentDialog">
+
+                <argument
+                    android:name="challengePos"
+                    app:argType="integer" />
+            </action>
+            <action
+                android:id="@+id/to_challengeFormFragment"
+                app:destination="@id/challengeFormFragment">
+
+                <argument
+                    android:name="challengePos"
+                    app:argType="integer" />
+            </action>
+        </fragment>
+        <dialog
+            android:id="@+id/challengeFormFragmentDialog"
+            android:name="my.city.ui.explorer.event.challenges.ChallengeFormFragment"
+            android:label="@string/nav_challenge_creation"
+            tools:layout="@layout/fragment_challenge_form">
+            <argument
+                android:name="challengePos"
+                app:argType="integer"
+                android:defaultValue="-1" />
+        </dialog>
+        <fragment
+            android:id="@+id/challengeFormFragment"
+            android:name="my.city.ui.explorer.event.challenges.ChallengeFormFragment"
+            android:label="@string/nav_challenge_creation"
+            tools:layout="@layout/fragment_challenge_form">
+            <argument
+                android:name="challengePos"
+                app:argType="integer" />
+            <action
+                android:id="@+id/to_fragment_event_form"
+                app:destination="@id/fragment_event_form">
+            </action>
+        </fragment>
+    </navigation>
 </navigation>
