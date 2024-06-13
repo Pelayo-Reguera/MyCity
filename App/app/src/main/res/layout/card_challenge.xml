@@ -20,20 +20,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="8dp"
+        android:paddingVertical="@dimen/card_view_vertical_padding"
         android:orientation="horizontal">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgChallenge"
             app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/img_recycler_view_item"
+            android:layout_height="@dimen/img_recycler_view_item"
             android:layout_marginHorizontal="16dp"
             android:src="@drawable/img_default_party" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="2"
             android:orientation="vertical">
 
             <TextView
@@ -58,5 +59,29 @@
                 android:text="@string/large_text" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="16dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btniEditChallenge"
+                android:layout_width="@dimen/icon_button"
+                android:layout_height="@dimen/icon_button"
+                android:layout_marginHorizontal="5dp"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                app:icon="@drawable/baseline_edit_24" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btniRemoveChallenge"
+                android:layout_width="@dimen/icon_button"
+                android:layout_height="@dimen/icon_button"
+                android:layout_marginHorizontal="5dp"
+                style="@style/Widget.Material3.Button.IconButton"
+                app:icon="@drawable/baseline_remove_circle_24"
+                app:iconTint="@color/red" />
+        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
