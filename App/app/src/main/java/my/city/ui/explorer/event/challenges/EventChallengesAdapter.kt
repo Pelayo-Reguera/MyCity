@@ -13,15 +13,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import my.city.R
 import my.city.logic.Challenge
 
 /**
  * This class is in charge of generating components based on a layout which later will be
  * used in a recycler view
+ *
+ * @author Pelayo Reguera García
  * */
-class EventChallengesAdapter(private val challengesList: List<Challenge>) :
+class EventChallengesAdapter(
+    private val challengesList: List<Challenge>,
+    private val isEditable: Boolean,
+    private val onClickEdit: (Int) -> Unit = { },
+    private val onClickRemove: (Int) -> Unit = { },
+) :
     RecyclerView.Adapter<EventChallengesAdapter.ChallengeViewHolder>() {
 
     /**
@@ -34,10 +43,20 @@ class EventChallengesAdapter(private val challengesList: List<Challenge>) :
         private val txtTitle: TextView = view.findViewById(R.id.txtChallengeName)
         private val txtReward: TextView = view.findViewById(R.id.txtChallengeReward)
         private val txtDescription: TextView = view.findViewById(R.id.txtChallengeDesc)
+        private val btniEditChallenge: MaterialButton = view.findViewById(R.id.btniEditChallenge)
+        private val btniRemoveChallenge: MaterialButton =
+            view.findViewById(R.id.btniRemoveChallenge)
 
-        fun bindEvent(challenge: Challenge) {
+        fun bindEvent(
+            challenge: Challenge,
+            onClickEdit: (Int) -> Unit,
+            onClickRemove: (Int) -> Unit,
+        ) {
             txtTitle.text = challenge.name
             txtReward.text = challenge.reward.toString()
+            txtDescription.text = challenge.description
+            btniEditChallenge.setOnClickListener { onClickEdit(adapterPosition) }
+            btniRemoveChallenge.setOnClickListener { onClickRemove(adapterPosition) }
         }
     }
 
@@ -47,10 +66,18 @@ class EventChallengesAdapter(private val challengesList: List<Challenge>) :
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.card_challenge, viewGroup, false)
 
-        view.setOnClickListener { //TODO: Show the detailed information about the challenge
+        view.setOnClickListener {
             val txtDescription: TextView = view.findViewById(R.id.txtChallengeDesc)
-            txtDescription.visibility =
-                if (txtDescription.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+            txtDescription.isVisible = !txtDescription.isVisible
+        }
+
+        val btniEditChallenge: MaterialButton = view.findViewById(R.id.btniEditChallenge)
+        val btniRemoveChallenge: MaterialButton = view.findViewById(R.id.btniRemoveChallenge)
+        if (!isEditable) {
+            btniEditChallenge.isVisible = false
+            btniEditChallenge.isClickable = false
+            btniRemoveChallenge.isVisible = false
+            btniRemoveChallenge.isClickable = false
         }
 
         return ChallengeViewHolder(view)
@@ -61,7 +88,7 @@ class EventChallengesAdapter(private val challengesList: List<Challenge>) :
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.bindEvent(challengesList[position])
+        viewHolder.bindEvent(challengesList[position], onClickEdit, onClickRemove)
     }
 
     // Return the size of your dataset (invoked by the layout manager)
