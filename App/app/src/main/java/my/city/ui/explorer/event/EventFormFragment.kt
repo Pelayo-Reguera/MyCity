@@ -56,11 +56,53 @@ class EventFormFragment : Fragment(R.layout.fragment_event_form), DialogListener
 
         binding.btniAddChallenge.setOnClickListener { showChallengeForm() }
 
-        //TODO: Store the created event in database
         binding.efabReady.setOnClickListener {
-            findNavController().navigate(
-                EventFormFragmentDirections.toFragmentExplorer()
-            )
+            val emptyError = getString(R.string.txtEmptyError)
+            var isValid = if (binding.txteEventName.text.isNullOrBlank()) {
+                binding.txtEventName.error = emptyError
+                false
+            } else {
+                binding.txtEventName.error = null
+                true
+            }
+
+            isValid = if (binding.txteEventDescription.text.isNullOrBlank()) {
+                binding.txtEventDescription.error = emptyError
+                false
+            } else {
+                binding.txtEventDescription.error = null
+                isValid
+            }
+
+            isValid = if (binding.txteEventLocation.text.isNullOrBlank()) {
+                binding.txtEventLocation.error = emptyError
+                false
+            } else {
+                binding.txtEventLocation.error = null
+                isValid
+            }
+
+            isValid = if (binding.txteEventStartDate.text.isNullOrBlank()) {
+                binding.txtEventStartDate.error = emptyError
+                false
+            } else {
+                binding.txtEventStartDate.error = null
+                isValid
+            }
+
+            isValid = if (binding.txteEventEndDate.text.isNullOrBlank()) {
+                binding.txtEventEndDate.error = emptyError
+                false
+            } else {
+                binding.txtEventEndDate.error = null
+                isValid
+            }
+
+            if (isValid) {//TODO: Store the created event in database
+                findNavController().navigate(
+                    EventFormFragmentDirections.toFragmentExplorer()
+                )
+            }
         }
     }
 

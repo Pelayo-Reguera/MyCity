@@ -20,12 +20,16 @@
         android:orientation="vertical">
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txtChallengeName"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:maxWidth="400dp"
+            android:layout_marginBottom="10dp"
+            android:labelFor="@+id/txteChallengeName"
             app:counterMaxLength="@integer/name_legth"
             app:counterEnabled="true"
-            android:layout_marginBottom="10dp">
+            app:errorEnabled="true"
+            app:endIconMode="clear_text"
+            app:helperText="@string/textRequired">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txteChallengeName"
@@ -38,34 +42,41 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txtChallengeReward"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:maxWidth="400dp"
-            android:layout_marginVertical="10dp">
+            android:layout_marginVertical="10dp"
+            android:labelFor="@+id/txteChallengeReward"
+            app:errorEnabled="true"
+            app:helperText="@string/textRequired"
+            app:suffixText="pts">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txteChallengeReward"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="150dp"
+                android:layout_height="match_parent"
+                android:minWidth="@dimen/text_min_width"
                 android:hint="@string/challenge_form_txteChallengeReward"
-                android:inputType="number"
-                android:maxHeight="500dp" />
+                android:text="@string/zero_value"
+                android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txtChallengeDescription"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:maxWidth="400dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:labelFor="@+id/txteChallengeDescription"
+            app:errorEnabled="true"
+            app:helperText="@string/textRequired">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txteChallengeDescription"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="@dimen/text_max_height"
                 android:hint="@string/txteDescription"
-                android:inputType="text|textMultiLine"
-                android:singleLine="true" />
+                android:inputType="text|textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

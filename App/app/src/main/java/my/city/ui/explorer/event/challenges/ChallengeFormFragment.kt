@@ -56,10 +56,12 @@ class ChallengeFormFragment : DialogFragment(R.layout.fragment_challenge_form) {
 
         // Actions for the button 'Accept' in case the dialog is shown
         binding.btnDialogAccept?.setOnClickListener {
-            onComplete()
-            dialogListeners?.let {
-                it.onClickAccept(this)
-                dialog?.dismiss()
+            if (checkFields()) {
+                onComplete()
+                dialogListeners?.let {
+                    it.onClickAccept(this)
+                    dialog?.dismiss()
+                }
             }
         }
 
@@ -68,8 +70,10 @@ class ChallengeFormFragment : DialogFragment(R.layout.fragment_challenge_form) {
 
         // Actions for the extended button in case the extended fragment is shown
         binding.efabChallengeReady?.setOnClickListener {
-            onComplete()
-            findNavController().navigate(ChallengeFormFragmentDirections.toFragmentEventForm())
+            if (checkFields()) {
+                onComplete()
+                findNavController().navigate(ChallengeFormFragmentDirections.toFragmentEventForm())
+            }
         }
     }
 
@@ -77,6 +81,8 @@ class ChallengeFormFragment : DialogFragment(R.layout.fragment_challenge_form) {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
 
+        // We make the container of the Dialog transparent to display only the Material CardView and
+        // its content
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         return dialog
@@ -91,6 +97,35 @@ class ChallengeFormFragment : DialogFragment(R.layout.fragment_challenge_form) {
         // the current fragment from the navigation graph used in it that is being shown in the screen
         dialogListeners =
             parentFragment?.childFragmentManager?.primaryNavigationFragment as? DialogListeners
+    }
+
+    private fun checkFields(): Boolean {
+        val emptyError = getString(R.string.txtEmptyError)
+        var isValid = if (challengeName.text.isNullOrBlank()) {
+            binding.contentChallengeForm.txtChallengeName.error = emptyError
+            false
+        } else {
+            binding.contentChallengeForm.txtChallengeName.error = null
+            true
+        }
+
+        isValid = if (challengeReward.text.isNullOrBlank()) {
+            binding.contentChallengeForm.txtChallengeReward.error = emptyError
+            false
+        } else {
+            binding.contentChallengeForm.txtChallengeReward.error = null
+            isValid
+        }
+
+        isValid = if (challengeDescription.text.isNullOrBlank()) {
+            binding.contentChallengeForm.txtChallengeDescription.error = emptyError
+            false
+        } else {
+            binding.contentChallengeForm.txtChallengeDescription.error = null
+            isValid
+        }
+
+        return isValid
     }
 
     /**
