@@ -19,7 +19,7 @@
     <string name="txtPoints">Puntos</string>
     <string name="txtUsername" translatable="false">\@anonymous</string>
     <string name="title_activity_scrolling" translatable="false">ScrollingActivity</string>
-    <string name="txteDescription">Descripción</string>
+    <string name="txteDescription">Descripción*</string>
     <string name="large_text" translatable="false">
         "Material is the metaphor.\n\n"
 
@@ -127,15 +127,18 @@
     <string name="login_failed">"Login failed"</string>
     <!--    Context-dependent text-->
     <string name="nav_event_creation">Crear evento</string>
-    <string name="event_form_txteEventName">Nombre del evento</string>
-    <string name="event_form_txteEventLocation">Ubicación</string>
-    <string name="event_form_txteEventStartDate">Inicio</string>
-    <string name="event_form_txteEventEndDate">Fin</string>
+    <string name="event_form_txteEventName">Nombre del evento*</string>
+    <string name="event_form_txteEventLocation">Ubicación*</string>
+    <string name="event_form_txteEventStartDate">Inicio*</string>
+    <string name="event_form_txteEventEndDate">Fin*</string>
     <string name="event_form_txtEventChallenges">Retos</string>
     <string name="event_form_fabEventCreate">¡Listo!</string>
-    <string name="challenge_form_txteChallengeReward">Premio</string>
-    <string name="challenge_form_txteChallengeName">Nombre del reto</string>
+    <string name="challenge_form_txteChallengeReward">Premio*</string>
+    <string name="challenge_form_txteChallengeName">Nombre del reto*</string>
     <string name="btnAccept">Aceptar</string>
     <string name="btnCancel">Cancelar</string>
     <string name="nav_challenge_creation">Crear reto</string>
+    <string name="textRequired">*obligatorio</string>
+    <string name="txtEmptyError">Rellenar campo</string>
+    <string name="zero_value" translatable="false">0</string>
 </resources>

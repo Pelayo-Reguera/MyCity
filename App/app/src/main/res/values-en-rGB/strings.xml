@@ -22,16 +22,18 @@
     <string name="tabiChallenge">CHALLENGES</string>
     <string name="nav_event">Event</string>
     <string name="nav_event_creation">Create event</string>
-    <string name="event_form_txteEventName">Name of the event</string>
-    <string name="txteDescription">Description</string>
-    <string name="event_form_txteEventLocation">Location</string>
-    <string name="event_form_txteEventStartDate">Start</string>
-    <string name="event_form_txteEventEndDate">End</string>
+    <string name="event_form_txteEventName">Name of the event*</string>
+    <string name="txteDescription">Description*</string>
+    <string name="event_form_txteEventLocation">Location*</string>
+    <string name="event_form_txteEventStartDate">Start*</string>
+    <string name="event_form_txteEventEndDate">End*</string>
     <string name="event_form_txtEventChallenges">Challenges</string>
     <string name="event_form_fabEventCreate">Ready!</string>
-    <string name="challenge_form_txteChallengeReward">Reward</string>
-    <string name="challenge_form_txteChallengeName">Name of the challenge</string>
+    <string name="challenge_form_txteChallengeReward">Reward*</string>
+    <string name="challenge_form_txteChallengeName">Name of the challenge*</string>
     <string name="btnAccept">Accept</string>
     <string name="btnCancel">Cancel</string>
     <string name="nav_challenge_creation">Create challenge</string>
+    <string name="textRequired">*required</string>
+    <string name="txtEmptyError">Fill text field</string>
 </resources>
