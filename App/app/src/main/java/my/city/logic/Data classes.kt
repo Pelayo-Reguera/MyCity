@@ -47,7 +47,6 @@ data class Event(
     val endEvent: LocalDateTime,
     val guests: MutableList<User>
 )
-//TODO: Get the data from the database
 
 data class Location(val geoPoint: GeoPoint, val street: String)
 

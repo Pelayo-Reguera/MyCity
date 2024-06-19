@@ -16,6 +16,7 @@ import java.time.LocalDateTime
 
 /**
  * [ViewModel] in charge of storing all the information related to an [Event][my.city.logic.Event]
+ * when it is being created. Its content will disappear in case the process is cancelled
  *
  * @author Pelayo Reguera García
  * */

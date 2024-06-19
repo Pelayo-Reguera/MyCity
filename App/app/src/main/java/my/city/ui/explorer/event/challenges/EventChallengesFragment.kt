@@ -15,7 +15,11 @@ import my.city.R
 import my.city.databinding.FragmentEventChallengesBinding
 import my.city.logic.Challenge
 
-class EventChallengesFragment : Fragment(R.layout.fragment_rvevent_challenges) {
+/**
+ * This class represents the view [R.layout.fragment_event_challenges]
+ * showing a list of challenges with which the user can interact
+ * */
+class EventChallengesFragment : Fragment(R.layout.fragment_event_challenges) {
 
     private lateinit var binding: FragmentEventChallengesBinding
 
@@ -24,8 +28,9 @@ class EventChallengesFragment : Fragment(R.layout.fragment_rvevent_challenges) {
         // Use the static method from the class binding .bind(<<view>>) when the view is already
         // inflated and we want again an instance of the class binding
         binding = FragmentEventChallengesBinding.bind(view)
-        binding.rvChallenges.setHasFixedSize(true)
+        binding.layoutRvChallenges.rvChallenges.setHasFixedSize(true)
 
+        //TODO: Remove hardcoded challenges
         val challengesList: MutableList<Challenge> = mutableListOf(
             Challenge("Desafio1", "Descripcion1", "coin1", 150),
             Challenge("Desafio2", "Descripcion2", "coin2", 250),
@@ -34,6 +39,7 @@ class EventChallengesFragment : Fragment(R.layout.fragment_rvevent_challenges) {
             Challenge("Desafio5", "Descripcion5", "coin5", 300),
         )
 
-        binding.rvChallenges.adapter = EventChallengesAdapter(challengesList)
+        binding.layoutRvChallenges.rvChallenges.adapter =
+            EventChallengesAdapter(challengesList, false)
     }
 }

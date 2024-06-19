@@ -33,6 +33,8 @@ class ChallengeFormFragment : DialogFragment(R.layout.fragment_challenge_form) {
 
     private val eventVM: EventCreationVM by navGraphViewModels(R.id.event_form_navigation)
     private lateinit var binding: FragmentChallengeFormBinding
+
+    /** Listeners implemented by the parent hosting this dialog*/
     private var dialogListeners: DialogListeners? = null
     private val args: ChallengeFormFragmentArgs by navArgs()
     private val challengeName: TextInputEditText by lazy { binding.contentChallengeForm.txteChallengeName }
