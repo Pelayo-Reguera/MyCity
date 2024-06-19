@@ -31,6 +31,7 @@
         android:layout_margin="16dp"
         android:contentDescription="@string/fabEventInfo"
         android:src="@drawable/outline_local_activity_24"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
         app:maxImageSize="30dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
