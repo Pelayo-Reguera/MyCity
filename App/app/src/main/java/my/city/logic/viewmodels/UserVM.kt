@@ -16,7 +16,6 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.ktx.Firebase
 import my.city.database.RemoteDatabase
 import my.city.logic.User
@@ -24,14 +23,13 @@ import my.city.logic.User
 //TODO: Make the properties of User observable with LiveData
 class UserVM : ViewModel() {
 
-    lateinit var user: User
+    var user: User = User("", "", "", mutableListOf(), mutableMapOf(), true)
         private set
-
+    var isConnected = false
     private var currentUser: FirebaseUser? = Firebase.auth.currentUser
     lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
     fun signIn() {
-        //INFO: Authentication only when needed, allow use the app in local mode
         if (currentUser == null) {
             // Chosen authentication providers
             val providers = arrayListOf(
@@ -47,8 +45,6 @@ class UserVM : ViewModel() {
             signInLauncher.launch(signInIntent)
             currentUser = Firebase.auth.currentUser
         }
-
-        setUserData()
     }
 
     private fun setUserData() {
@@ -62,6 +58,8 @@ class UserVM : ViewModel() {
                 it.isAnonymous,
             )
         }
+
+        RemoteDatabase.user = user
     }
 
     fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
@@ -78,30 +76,30 @@ class UserVM : ViewModel() {
         }
     }
 
-    suspend fun getUser(): String {
-//        if (user.userName.isBlank()) {
-//            result = RemoteDatabase.getProfileInfo().await()["email"].toString()
-        val result: DocumentSnapshot?
-        if (currentUser == null) {
-            // Chosen authentication providers
-            val providers = arrayListOf(
-                AuthUI.IdpConfig.EmailBuilder().build(),
-            )
-
-            // Create and launch sign-in intent
-            val signInIntent = AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
-                .build()
-            signInLauncher.launch(signInIntent)
-        }
-        result = RemoteDatabase.getProfileInfo()
+//    suspend fun getUser(): String {
+////        if (user.userName.isBlank()) {
+////            result = RemoteDatabase.getProfileInfo().await()["email"].toString()
+//        val result: DocumentSnapshot?
+//        if (currentUser == null) {
+//            // Chosen authentication providers
+//            val providers = arrayListOf(
+//                AuthUI.IdpConfig.EmailBuilder().build(),
+//            )
+//
+//            // Create and launch sign-in intent
+//            val signInIntent = AuthUI.getInstance()
+//                .createSignInIntentBuilder()
+//                .setAvailableProviders(providers)
+//                .build()
+//            signInLauncher.launch(signInIntent)
 //        }
-
-        // If result != null then the block of code inside let is executed. In this block "email" key
-        // is accessed and converted its value to a String
-        // If result == null then returns an empty String
-        //TODO: Return the whole user object
-        return result?.let { return it["email"] as String } ?: ""
-    }
+//        result = RemoteDatabase.getProfileInfo()
+////        }
+//
+//        // If result != null then the block of code inside let is executed. In this block "email" key
+//        // is accessed and converted its value to a String
+//        // If result == null then returns an empty String
+//        //TODO: Return the whole user object
+//        return result?.let { return it["email"] as String } ?: ""
+//    }
 }
