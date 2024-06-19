@@ -22,4 +22,8 @@
     <dimen name="dialog_actions_marginTop">24dp</dimen>
     <dimen name="dialog_padding_between_actions">8dp</dimen>
     <dimen name="dialog_padding">24dp</dimen>
+    <dimen name="anim_dialog_icon_size">96dp</dimen>
+    <dimen name="anim_dialog_minSize">280dp</dimen>
+    <dimen name="anim_dialog_maxSize">560dp</dimen>
+
 </resources>

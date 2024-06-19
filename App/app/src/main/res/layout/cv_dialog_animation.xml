@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="@dimen/anim_dialog_minSize"
+    android:minHeight="@dimen/anim_dialog_minSize"
+    android:maxWidth="@dimen/anim_dialog_maxSize"
+    android:maxHeight="@dimen/anim_dialog_maxSize"
+    android:textAlignment="textStart"
+    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.ExtraLarge">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minWidth="@dimen/anim_dialog_minSize"
+        android:minHeight="@dimen/anim_dialog_minSize"
+        android:maxWidth="@dimen/anim_dialog_maxSize"
+        android:maxHeight="@dimen/anim_dialog_maxSize">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animIcon"
+            android:layout_width="@dimen/anim_dialog_icon_size"
+            android:layout_height="@dimen/anim_dialog_icon_size"
+            android:layout_gravity="center"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</com.google.android.material.card.MaterialCardView>

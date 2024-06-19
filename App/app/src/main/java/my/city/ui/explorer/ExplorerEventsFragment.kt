@@ -8,18 +8,22 @@
 
 package my.city.ui.explorer
 
+import android.animation.Animator
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.GeoPoint
+import com.airbnb.lottie.LottieAnimationView
 import my.city.R
 import my.city.databinding.FragmentEventsExplorerBinding
-import my.city.logic.Event
-import my.city.logic.Location
-import my.city.logic.User
-import java.time.LocalDateTime
+import my.city.logic.viewmodels.EventsListVM
+import my.city.logic.viewmodels.State
+import my.city.logic.viewmodels.UserVM
 
 /**
  * [Fragment] containing a list of upcoming events cards
@@ -34,6 +38,8 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
 
     private lateinit var binding: FragmentEventsExplorerBinding
     private lateinit var rvEvents: RecyclerView
+    private val userVM: UserVM by activityViewModels()
+    private val eventsListVM: EventsListVM by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,64 +50,55 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
         rvEvents.setHasFixedSize(true)
 
         //TODO: Extract events from the database
-        val eventsList: MutableList<Event> = mutableListOf(
-            Event(
-                "Los40 Music awards",
-                mutableListOf(
-                    User(
-                        "User1",
-                        "email1@gmail.com",
-                        "photoURL",
-                        mutableListOf(),
-                        mutableMapOf()
-                    )
-                ),
-                "Evento de ejemplo",
-                mutableListOf(),
-                Location(GeoPoint(0.0, 0.0), "Mi casa"),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                mutableListOf(),
-            ),
-            Event(
-                "b",
-                mutableListOf(
-                    User(
-                        "User1",
-                        "email1@gmail.com",
-                        "photoURL",
-                        mutableListOf(),
-                        mutableMapOf()
-                    )
-                ),
-                "Evento de ejemplo",
-                mutableListOf(),
-                Location(GeoPoint(0.0, 0.0), "Mi casa"),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                mutableListOf(),
-            ),
-            Event(
-                "c",
-                mutableListOf(
-                    User(
-                        "User1",
-                        "email1@gmail.com",
-                        "photoURL",
-                        mutableListOf(),
-                        mutableMapOf()
-                    )
-                ),
-                "Evento de ejemplo",
-                mutableListOf(),
-                Location(GeoPoint(0.0, 0.0), "Mi casa"),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                mutableListOf(),
-            )
-        )
-        val eventsAdapter = ExplorerAdapter(eventsList)
-        rvEvents.adapter = eventsAdapter
+        rvEvents.adapter = eventsListVM.events.value?.let { ExplorerAdapter(it) }
+
+        eventsListVM.events.observe(viewLifecycleOwner) {
+            rvEvents.adapter = ExplorerAdapter(it)
+        }
+
+        // Observer executed when an Event is created
+        eventsListVM.message.observe(viewLifecycleOwner) {
+            context?.let {
+                val builder = Dialog(it)
+                val inflater = requireActivity().layoutInflater
+
+                val binding = inflater.inflate(R.layout.cv_dialog_animation, null)
+                val animationView = binding.findViewById<LottieAnimationView>(R.id.animIcon)
+
+                animationView.setAnimation(R.raw.orange_city)
+                animationView.addAnimatorListener(object : Animator.AnimatorListener {
+                    var isFinished = false //It is used to determined when the animation was changed
+                    override fun onAnimationStart(animation: Animator) {}
+                    override fun onAnimationEnd(animation: Animator) {
+                        if (isFinished) {
+                            builder.dismiss()
+                        }
+                    }
+
+                    override fun onAnimationCancel(animation: Animator) {}
+                    override fun onAnimationRepeat(animation: Animator) {
+                        if (eventsListVM.processState == State.SUCCESS) {
+                            // When doing this attachment, onAnimationEnd is executed, that's why
+                            // isFinished variable is needed
+                            animationView.setAnimation(R.raw.orange_tick)
+                            animationView.playAnimation()
+                            animationView.repeatCount = 0
+                            isFinished = true
+                        }
+                    }
+                })
+
+                builder.setContentView(binding)
+                builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                builder.setCancelable(false)
+                builder.create()
+                builder.show()
+            }
+        }
+
+        //FIXME: Uncomment for the final product
+//        binding.fabCreateEvent.isEnabled = !userVM.user.isAnonymous
+
         binding.fabCreateEvent.setOnClickListener {
             findNavController().navigate(ExplorerEventsFragmentDirections.toEventFormNavigation())
         }
