@@ -36,4 +36,8 @@
     <string name="nav_challenge_creation">Create challenge</string>
     <string name="textRequired">*required</string>
     <string name="txtEmptyError">Fill text field</string>
+    <string name="msgDialog_createdEvent">Created event</string>
+    <string name="search_location_error">Search error</string>
+    <string name="location_not_selected">Location not selected</string>
+    <string name="internet_connection_error">Internet connection error</string>
 </resources>

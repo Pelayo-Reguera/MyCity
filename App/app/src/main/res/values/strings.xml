@@ -141,4 +141,8 @@
     <string name="textRequired">*obligatorio</string>
     <string name="txtEmptyError">Rellenar campo</string>
     <string name="zero_value" translatable="false">0</string>
+    <string name="msgDialog_createdEvent">Evento creado</string>
+    <string name="search_location_error">Error en la búsqueda</string>
+    <string name="location_not_selected">Ubicación no seleccionada</string>
+    <string name="internet_connection_error">Error de conexión</string>
 </resources>
