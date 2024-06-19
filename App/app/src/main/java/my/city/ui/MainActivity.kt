@@ -8,9 +8,18 @@
 
 package my.city.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest.Builder
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -25,6 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import my.city.R
 import my.city.databinding.ActivityMainBinding
+import my.city.logic.viewmodels.EventsListVM
 import my.city.logic.viewmodels.UserVM
 
 /**
@@ -44,6 +54,7 @@ class MainActivity : AppCompatActivity() {
     // Its initialization is delegated to viewModels() to determine its scope to the activity in this
     // case. It doesn't work if the default constructor of userVM or ViewModel() is used
     private val userVm: UserVM by viewModels()
+    private val eventsListVM: EventsListVM by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //INFO: Try to improve the splash screen using an animated icon
@@ -94,7 +105,92 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CHANGE_NETWORK_STATE
+            ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_SETTINGS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            internetConfig()
+        } else {
+            val locationPermissionRequest = registerForActivityResult(
+                ActivityResultContracts.RequestMultiplePermissions()
+            ) { permissions ->
+                var isGranted =
+                    permissions.getOrDefault(Manifest.permission.CHANGE_NETWORK_STATE, false)
+                isGranted = isGranted && permissions.getOrDefault(
+                    Manifest.permission.WRITE_SETTINGS,
+                    false
+                )
+
+                if (isGranted) {
+                    internetConfig()
+                }
+            }
+
+            locationPermissionRequest.launch(
+                arrayOf(
+                    Manifest.permission.CHANGE_NETWORK_STATE,
+                    Manifest.permission.WRITE_SETTINGS
+                )
+            )
+        }
+
         userVm.signIn()
+    }
+
+    private fun internetConfig() {
+        val connectivityManager = ContextCompat.getSystemService(
+            this,
+            ConnectivityManager::class.java
+        ) as ConnectivityManager
+
+        val networkRequest = Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+            .build()
+
+        val networkCallback = object : ConnectivityManager.NetworkCallback() {
+            // network is available for use
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                userVm.isConnected = true
+            }
+
+            // Network capabilities have changed for the network
+            override fun onCapabilitiesChanged(
+                network: Network,
+                networkCapabilities: NetworkCapabilities,
+            ) {
+                super.onCapabilitiesChanged(network, networkCapabilities)
+                userVm.isConnected =
+                    networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                if (!userVm.isConnected) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        R.string.internet_connection_error,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+            // lost network connection
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                userVm.isConnected = false
+                Toast.makeText(
+                    this@MainActivity,
+                    R.string.internet_connection_error,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+        connectivityManager.requestNetwork(networkRequest, networkCallback)
     }
 
     override fun onSupportNavigateUp(): Boolean {
