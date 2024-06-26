@@ -17,7 +17,10 @@
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="img_recycler_view_item">40dp</dimen>
+    <dimen name="img_card_and_carousel_height">194dp</dimen>
     <dimen name="card_view_vertical_padding">8dp</dimen>
+    <dimen name="carousel_horizontal_padding">16dp</dimen>
+    <dimen name="carousel_img_horizontal_margin">4dp</dimen>
     <dimen name="icon_button">44dp</dimen>
     <dimen name="dialog_actions_marginTop">24dp</dimen>
     <dimen name="dialog_padding_between_actions">8dp</dimen>
