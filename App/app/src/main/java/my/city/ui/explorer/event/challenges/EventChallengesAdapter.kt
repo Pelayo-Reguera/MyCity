@@ -11,7 +11,6 @@ package my.city.ui.explorer.event.challenges
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -39,7 +38,6 @@ class EventChallengesAdapter(
      */
     class ChallengeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val imgChallenge: ImageView = view.findViewById(R.id.imgChallenge)
         private val txtTitle: TextView = view.findViewById(R.id.txtChallengeName)
         private val txtReward: TextView = view.findViewById(R.id.txtChallengeReward)
         private val txtDescription: TextView = view.findViewById(R.id.txtChallengeDesc)
@@ -55,8 +53,8 @@ class EventChallengesAdapter(
             txtTitle.text = challenge.name
             txtReward.text = challenge.reward.toString()
             txtDescription.text = challenge.description
-            btniEditChallenge.setOnClickListener { onClickEdit(adapterPosition) }
-            btniRemoveChallenge.setOnClickListener { onClickRemove(adapterPosition) }
+            btniEditChallenge.setOnClickListener { onClickEdit(bindingAdapterPosition) }
+            btniRemoveChallenge.setOnClickListener { onClickRemove(bindingAdapterPosition) }
         }
     }
 
