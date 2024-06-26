@@ -11,13 +11,14 @@ package my.city.ui.explorer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.imageview.ShapeableImageView
 import my.city.R
 import my.city.logic.Event
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 /**
@@ -33,17 +34,22 @@ class ExplorerAdapter(private val eventsList: List<Event>) :
      */
     class EventViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val imgEvent: ImageView = view.findViewById(R.id.imgEvent)
+        private val imgEvent: ShapeableImageView = view.findViewById(R.id.imgEvent)
         private val txtTitle: TextView = view.findViewById(R.id.txtTitle)
         private val txtSubTitle: TextView = view.findViewById(R.id.txtSubTitle)
         private val txtDescription: TextView = view.findViewById(R.id.txtDescription)
         private val btnAttendance: MaterialButton = view.findViewById(R.id.btnAttendance)
 
         fun bindEvent(event: Event) {
+            if (event.eventDrawables.size > 0) {
+                imgEvent.setImageDrawable(event.eventDrawables[0])
+            }
             txtTitle.text = event.name
             txtSubTitle.text =
-                event.startEvent.format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
-            txtDescription.text = event.location.street
+                event.startEvent.toDate().toInstant().atZone(ZoneId.systemDefault())
+                    .toLocalDateTime()
+                    .format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
+            txtDescription.text = event.street
             btnAttendance.text = "Join"
         }
     }
