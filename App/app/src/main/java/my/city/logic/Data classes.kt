@@ -8,8 +8,12 @@
 
 package my.city.logic
 
+import android.graphics.drawable.Drawable
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.GeoPoint
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 /**
  * It represents all the information a challenge created for a specific event can contain
@@ -26,29 +30,94 @@ data class Challenge(val name: String, val description: String, val coinID: Stri
 /**
  * It represents all the information an event created by an organizer can contain
  *
- * @property organizer The name of the user who organizes this event
  * @property name The name of the event
- * @property description
- * @property challenges A [MutableList] containing all activities that attendees can do during the event
- * @property location The place where the event is held
- * @property startEvent The date and hour when the event begins
- * @property endEvent The date and hour when the event ends
- * @property guests A [MutableList] containing all the users that will attend this event
+ * @property eventDrawables [MutableList] of drawables of the Event
+ * @property eventImgURIs [MutableList] with paths to each image of the Event
+ * @property organizers [MutableList] with the name of the users who organize this Event
+ * @property description Details of the Event
+ * @property challenges [MutableList] containing all activities that attendees can do during the event
+ * @property location [GeoPoint] of the place where the event is held
+ * @property street The address of the Event
+ * @property startEvent [Timestamp] representing the date and hour when the event begins.
+ * The secondary constructor automatically converts from [LocalDateTime] to [Timestamp]
+ * @property endEvent [Timestamp] representing the date and hour when the event ends.
+ * The secondary constructor automatically converts from [LocalDateTime] to [Timestamp]
+ * @property guests [MutableList] containing all the users that will attend this event
  *
  * @author Pelayo Reguera García
  * */
 data class Event(
-    val name: String,
-    val organizers: MutableList<User>,
-    val description: String,
-    val challenges: MutableList<Challenge>,
-    val location: Location,
-    val startEvent: LocalDateTime,
-    val endEvent: LocalDateTime,
-    val guests: MutableList<User>
-)
+    var eventImgURIs: MutableList<String> = mutableListOf(),
+    var organizers: MutableList<String> = mutableListOf(),
+) {
 
-data class Location(val geoPoint: GeoPoint, val street: String)
+    lateinit var name: String
+
+    @Exclude
+    var eventDrawables: MutableList<Drawable> = mutableListOf()
+        @Exclude get
+        @Exclude set
+    lateinit var description: String
+
+    @Exclude
+    var challenges: MutableList<Challenge> = mutableListOf()
+        @Exclude get
+        @Exclude set
+    lateinit var location: GeoPoint
+    lateinit var street: String
+    lateinit var startEvent: Timestamp
+    lateinit var endEvent: Timestamp
+
+    @Exclude
+    var guests: MutableList<User> = mutableListOf()
+        @Exclude get
+        @Exclude set
+
+    constructor(
+        name: String,
+        eventDrawables: MutableList<Drawable>,
+        eventImgURIs: MutableList<String>,
+        organizers: MutableList<String>,
+        description: String,
+        challenges: MutableList<Challenge>,
+        location: GeoPoint,
+        street: String,
+        startEvent: LocalDateTime,
+        endEvent: LocalDateTime,
+        guests: MutableList<User>,
+    ) : this(organizers) {
+        this.name = name
+        this.eventDrawables = eventDrawables
+        this.eventImgURIs = eventImgURIs
+        this.description = description
+        this.challenges = challenges
+        this.location = location
+        this.street = street
+
+        var instant = startEvent.atZone(ZoneId.systemDefault()).toInstant()
+        this.startEvent = Timestamp(instant.epochSecond, instant.nano)
+
+        instant = endEvent.atZone(ZoneId.systemDefault()).toInstant()
+        this.endEvent = Timestamp(instant.epochSecond, instant.nano)
+        this.guests = guests
+    }
+
+    fun copy(): Event {
+        return Event(
+            name,
+            eventDrawables.toMutableList(),
+            eventImgURIs.toMutableList(),
+            organizers.toMutableList(),
+            description,
+            challenges,
+            GeoPoint(location.latitude, location.longitude),
+            street,
+            startEvent.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
+            endEvent.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
+            guests
+        )
+    }
+}
 
 /**
  * It represents an User with all the information attached to it
