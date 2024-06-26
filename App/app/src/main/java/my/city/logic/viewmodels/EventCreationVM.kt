@@ -8,9 +8,10 @@
 
 package my.city.logic.viewmodels
 
+import android.graphics.drawable.Drawable
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.GeoPoint
 import my.city.logic.Challenge
-import my.city.logic.Location
 import my.city.logic.User
 import java.time.LocalDateTime
 
@@ -21,13 +22,15 @@ import java.time.LocalDateTime
  * @author Pelayo Reguera García
  * */
 class EventCreationVM : ViewModel() {
-
-    lateinit var name: String
+    var name: String = ""
+    val eventDrawables: MutableList<Drawable> by lazy { mutableListOf() }
+    val eventImgURIs: MutableList<String> by lazy { mutableListOf() }
     val organizers: MutableList<User> by lazy { mutableListOf() }
-    lateinit var description: String
+    var description: String = ""
     val challenges: MutableList<Challenge> by lazy { mutableListOf() }
-    lateinit var location: Location
-    lateinit var startEvent: LocalDateTime
-    lateinit var endEvent: LocalDateTime
+    var location: GeoPoint? = null
+    var street: String = ""
+    var startEvent: LocalDateTime? = null
+    var endEvent: LocalDateTime? = null
     val guests: MutableList<User> by lazy { mutableListOf() }
 }
