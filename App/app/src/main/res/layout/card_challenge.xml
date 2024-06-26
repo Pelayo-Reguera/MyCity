@@ -20,16 +20,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:baselineAligned="true"
         android:paddingVertical="@dimen/card_view_vertical_padding"
+        android:paddingHorizontal="16dp"
         android:orientation="horizontal">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/imgChallenge"
-            app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
-            android:layout_width="@dimen/img_recycler_view_item"
-            android:layout_height="@dimen/img_recycler_view_item"
-            android:layout_marginHorizontal="16dp"
-            android:src="@drawable/img_default_party" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -63,7 +57,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginHorizontal="16dp"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
