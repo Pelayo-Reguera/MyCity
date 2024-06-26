@@ -49,9 +49,6 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
         rvEvents = binding.rvEvents
         rvEvents.setHasFixedSize(true)
 
-        //TODO: Extract events from the database
-        rvEvents.adapter = eventsListVM.events.value?.let { ExplorerAdapter(it) }
-
         eventsListVM.events.observe(viewLifecycleOwner) {
             rvEvents.adapter = ExplorerAdapter(it)
         }
@@ -77,13 +74,23 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
 
                     override fun onAnimationCancel(animation: Animator) {}
                     override fun onAnimationRepeat(animation: Animator) {
-                        if (eventsListVM.processState == State.SUCCESS) {
-                            // When doing this attachment, onAnimationEnd is executed, that's why
-                            // isFinished variable is needed
-                            animationView.setAnimation(R.raw.orange_tick)
-                            animationView.playAnimation()
-                            animationView.repeatCount = 0
-                            isFinished = true
+                        when (eventsListVM.processState) {
+                            State.SUCCESS -> {
+                                // When doing this attachment, onAnimationEnd is executed, that's why
+                                // isFinished variable is needed
+                                animationView.setAnimation(R.raw.orange_tick)
+                                animationView.playAnimation()
+                                animationView.repeatCount = 0
+                                isFinished = true
+                            }
+
+                            State.IN_PROCESS -> {}
+                            State.FAILURE -> {
+                                animationView.setAnimation(R.raw.orange_cross)
+                                animationView.playAnimation()
+                                animationView.repeatCount = 0
+                                isFinished = true
+                            }
                         }
                     }
                 })
