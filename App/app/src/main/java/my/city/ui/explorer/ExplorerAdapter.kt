@@ -18,7 +18,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.imageview.ShapeableImageView
 import my.city.R
 import my.city.logic.Event
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 /**
@@ -32,13 +31,13 @@ class ExplorerAdapter(private val eventsList: List<Event>) :
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
-    class EventViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class EventViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
         private val imgEvent: ShapeableImageView = view.findViewById(R.id.imgEvent)
         private val txtTitle: TextView = view.findViewById(R.id.txtTitle)
         private val txtSubTitle: TextView = view.findViewById(R.id.txtSubTitle)
         private val txtDescription: TextView = view.findViewById(R.id.txtDescription)
-        private val btnAttendance: MaterialButton = view.findViewById(R.id.btnAttendance)
+        private val btnAttendance: MaterialButton = view.findViewById(R.id.btnAttendance) //TODO
 
         fun bindEvent(event: Event) {
             if (event.eventDrawables.size > 0) {
@@ -46,11 +45,13 @@ class ExplorerAdapter(private val eventsList: List<Event>) :
             }
             txtTitle.text = event.name
             txtSubTitle.text =
-                event.startEvent.toDate().toInstant().atZone(ZoneId.systemDefault())
-                    .toLocalDateTime()
-                    .format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
+                event.startLocalDateTime().format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
             txtDescription.text = event.street
-            btnAttendance.text = "Join"
+            // Behaviour of the card
+            view.setOnClickListener { card ->
+                card.findNavController()
+                    .navigate(ExplorerEventsFragmentDirections.toFragmentEvent(event.id))
+            }
         }
     }
 
@@ -59,10 +60,6 @@ class ExplorerAdapter(private val eventsList: List<Event>) :
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.card_event, viewGroup, false)
-
-        view.setOnClickListener { card ->
-            card.findNavController().navigate(R.id.to_fragment_event)
-        }
 
         return EventViewHolder(view)
     }
