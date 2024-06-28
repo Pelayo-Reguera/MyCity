@@ -25,6 +25,7 @@ enum class State {
 
 class EventsListVM : ViewModel() {
 
+    //INFO: Try to change it to a a HasMap or LinkedHasMap
     val events: MutableLiveData<MutableList<Event>> = MutableLiveData(mutableListOf())
         get() {
             RemoteDatabase.getEvents({ it ->
@@ -33,6 +34,7 @@ class EventsListVM : ViewModel() {
                     // For each document, convert it to an Event and request its images
                     try {
                         document.toObject<Event>()?.let { event ->
+                            event.id = document.id
                             list.add(event)
                             viewModelScope.launch {
                                 event.eventImgURIs.lastOrNull()?.let { uri ->
@@ -62,7 +64,7 @@ class EventsListVM : ViewModel() {
 
     var processState: State = State.IN_PROCESS
 
-    /** Message to be shown when any change has been done*/
+    /** Message to be shown when any change has been done */
     val message: MutableLiveData<String> = MutableLiveData()
 
     /**
