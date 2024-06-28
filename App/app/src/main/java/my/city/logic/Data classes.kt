@@ -46,11 +46,15 @@ data class Challenge(val name: String, val description: String, val coinID: Stri
  *
  * @author Pelayo Reguera García
  * */
-data class Event(
+data class Event(,
     var eventImgURIs: MutableList<String> = mutableListOf(),
     var organizers: MutableList<String> = mutableListOf(),
 ) {
 
+    @Exclude
+    var id: String = ""
+        @Exclude get
+        @Exclude set
     lateinit var name: String
 
     @Exclude
@@ -85,10 +89,11 @@ data class Event(
         startEvent: LocalDateTime,
         endEvent: LocalDateTime,
         guests: MutableList<User>,
-    ) : this(organizers) {
+        id: String = "", //It's the last one to avoid change all the calls to this constructor
+    ) : this(eventImgURIs, organizers) {
+        this.id = id
         this.name = name
         this.eventDrawables = eventDrawables
-        this.eventImgURIs = eventImgURIs
         this.description = description
         this.challenges = challenges
         this.location = location
@@ -114,8 +119,19 @@ data class Event(
             street,
             startEvent.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
             endEvent.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
-            guests
+            guests,
+            id
         )
+    }
+
+    fun startLocalDateTime(): LocalDateTime {
+        return startEvent.toDate().toInstant().atZone(ZoneId.systemDefault())
+            .toLocalDateTime()
+    }
+
+    fun endLocalDateTime(): LocalDateTime {
+        return endEvent.toDate().toInstant().atZone(ZoneId.systemDefault())
+            .toLocalDateTime()
     }
 }
 
