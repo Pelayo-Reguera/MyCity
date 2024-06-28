@@ -46,7 +46,7 @@ data class Challenge(val name: String, val description: String, val coinID: Stri
  *
  * @author Pelayo Reguera García
  * */
-data class Event(,
+data class Event(
     var eventImgURIs: MutableList<String> = mutableListOf(),
     var organizers: MutableList<String> = mutableListOf(),
 ) {
