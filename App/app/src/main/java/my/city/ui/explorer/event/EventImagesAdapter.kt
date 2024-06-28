@@ -28,7 +28,7 @@ import my.city.R
  * */
 class EventImagesAdapter(
     private val eventImagesList: List<Drawable>,
-    private val addImage: ActivityResultLauncher<PickVisualMediaRequest>,
+    private val addImage: ActivityResultLauncher<PickVisualMediaRequest>? = null,
 ) : RecyclerView.Adapter<EventImagesAdapter.ChallengeViewHolder>() {
 
     /**
@@ -41,10 +41,10 @@ class EventImagesAdapter(
 
         fun bindEvent(
             position: Int,
-            addImage: ActivityResultLauncher<PickVisualMediaRequest>,
+            addImage: ActivityResultLauncher<PickVisualMediaRequest>?,
             img: Drawable,
         ) {
-            if (position == 0) {
+            if (position == 0 && addImage != null) {
                 imgChallenge.isClickable = true
                 imgChallenge.setOnClickListener {
                     addImage.launch(

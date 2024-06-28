@@ -9,7 +9,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Theme.MyCity.NoActionBar"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -22,18 +22,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
+            android:backgroundTintMode="screen"
             app:layout_scrollInterpolator="@android:anim/linear_interpolator"
             app:layout_scrollFlags="scroll|snap|enterAlways|enterAlwaysCollapsed"
-            app:title="Los40 Music Awards"
             app:titleCollapseMode="fade">
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/app_bar_image"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvEventImages"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:src="@android:drawable/sym_def_app_icon"
-                android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax" />
+                android:layout_height="@dimen/carousel_height"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager"
+                tools:listitem="@layout/carousel_image" />
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:layout_width="match_parent"
@@ -44,7 +45,7 @@
 
         <!--    It's not necessary to include here TabItems because they only have
                 three attributes that are set from the code, in the configuration of the
-                TabLayoutMediator which is in charge of keep ing,synchronize the tabs with
+                TabLayoutMediator which is in charge of keeping, synchronize the tabs with
                 the ViewPager2 at the same time-->
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabsEvent"
@@ -61,6 +62,7 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabJoin"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:src="@drawable/outline_celebration_30"

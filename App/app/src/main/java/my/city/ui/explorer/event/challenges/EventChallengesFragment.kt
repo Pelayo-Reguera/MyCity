@@ -11,9 +11,10 @@ package my.city.ui.explorer.event.challenges
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.navGraphViewModels
 import my.city.R
 import my.city.databinding.FragmentEventChallengesBinding
-import my.city.logic.Challenge
+import my.city.logic.viewmodels.EventVM
 
 /**
  * This class represents the view [R.layout.fragment_event_challenges]
@@ -22,6 +23,7 @@ import my.city.logic.Challenge
 class EventChallengesFragment : Fragment(R.layout.fragment_event_challenges) {
 
     private lateinit var binding: FragmentEventChallengesBinding
+    private val eventVM: EventVM by navGraphViewModels(R.id.event_navigation)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -29,17 +31,9 @@ class EventChallengesFragment : Fragment(R.layout.fragment_event_challenges) {
         // inflated and we want again an instance of the class binding
         binding = FragmentEventChallengesBinding.bind(view)
         binding.layoutRvChallenges.rvChallenges.setHasFixedSize(true)
-
-        //TODO: Remove hardcoded challenges
-        val challengesList: MutableList<Challenge> = mutableListOf(
-            Challenge("Desafio1", "Descripcion1", "coin1", 150),
-            Challenge("Desafio2", "Descripcion2", "coin2", 250),
-            Challenge("Desafio3", "Descripcion3", "coin3", 100),
-            Challenge("Desafio4", "Descripcion4", "coin4", 400),
-            Challenge("Desafio5", "Descripcion5", "coin5", 300),
-        )
-
-        binding.layoutRvChallenges.rvChallenges.adapter =
-            EventChallengesAdapter(challengesList, false)
+        eventVM.event.observe(viewLifecycleOwner) {
+            binding.layoutRvChallenges.rvChallenges.adapter =
+                EventChallengesAdapter(it.challenges, false)
+        }
     }
 }

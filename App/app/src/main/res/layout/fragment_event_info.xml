@@ -29,26 +29,34 @@
             tools:text="Los40 Music Awards" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/txtInfoDateAndHour"
+            android:id="@+id/txtInfoLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            tools:text="Madrid, Spain" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txtInfoStartDateAndHour"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textAppearance="?attr/textAppearanceTitleSmall"
+            tools:text="00:00 22/12/2024" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txtInfoEndDateAndHour"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textAppearance="?attr/textAppearanceTitleSmall"
             tools:text="00:00 22/12/2024" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txtInfoOrganizers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textAppearance="?attr/textAppearanceBody2"
             tools:text="María Santana" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/txtInfoLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            tools:text="Madrid, Spain" />
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"

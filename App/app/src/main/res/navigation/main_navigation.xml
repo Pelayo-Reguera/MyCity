@@ -23,6 +23,13 @@
         <action
             android:id="@+id/to_fragment_explorer"
             app:destination="@id/fragment_events_explorer" />
+        <action
+            android:id="@+id/to_fragment_event"
+            app:destination="@id/event_navigation">
+            <argument
+                android:name="eventID"
+                app:argType="string" />
+        </action>
     </fragment>
 
     <fragment
@@ -38,8 +45,11 @@
             app:destination="@id/fragment_profile" />
         <action
             android:id="@+id/to_fragment_event"
-            app:destination="@id/fragment_event"
-            />
+            app:destination="@id/event_navigation">
+            <argument
+                android:name="eventID"
+                app:argType="string" />
+        </action>
         <action
             android:id="@+id/to_event_form_navigation"
             app:destination="@id/event_form_navigation" />
@@ -57,11 +67,30 @@
             android:id="@+id/to_fragment_explorer"
             app:destination="@id/fragment_events_explorer" />
     </fragment>
-    <fragment
-        android:id="@+id/fragment_event"
-        android:name="my.city.ui.explorer.event.EventFragment"
-        android:label="@string/nav_event"
-        tools:layout="@layout/fragment_event" />
+
+    <navigation
+        android:id="@+id/event_navigation"
+        app:startDestination="@id/fragment_event">
+        <fragment
+            android:id="@+id/fragment_event"
+            android:name="my.city.ui.explorer.event.EventFragment"
+            android:label="@string/nav_event"
+            tools:layout="@layout/fragment_event">
+            <argument
+                android:name="eventID"
+                app:argType="string" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/fragment_event_info"
+            android:name="my.city.ui.explorer.event.EventInfoFragment"
+            tools:layout="@layout/fragment_event_info" />
+        
+        <fragment
+            android:id="@+id/fragment_event_challenges"
+            android:name="my.city.ui.explorer.event.challenges.EventChallengesFragment"
+            tools:layout="@layout/fragment_event_challenges" />
+    </navigation>
 
     <navigation
         android:id="@+id/event_form_navigation"
