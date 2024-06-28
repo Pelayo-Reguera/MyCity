@@ -27,12 +27,10 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvEventImages"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/img_card_and_carousel_height"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
+                android:layout_height="@dimen/carousel_height"
+                android:layout_marginTop="10dp"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:layout_marginHorizontal="@dimen/carousel_horizontal_padding"
                 app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager"
                 tools:listitem="@layout/carousel_image" />
 
@@ -41,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginVertical="10dp"
+                android:layout_marginBottom="10dp"
                 style="@style/Widget.Material3.Button.IconButton.Filled"
                 app:icon="@drawable/outline_delete_24" />
 

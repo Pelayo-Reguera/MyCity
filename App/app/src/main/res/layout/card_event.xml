@@ -26,7 +26,7 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgEvent"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/img_card_and_carousel_height"
+            android:layout_height="@dimen/img_card_height"
             android:contentDescription="@string/img_event_description"
             android:scaleType="centerCrop"
             app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.ExtraLarge"
@@ -41,7 +41,7 @@
             android:paddingEnd="16dp">
 
             <!-- Title, secondary and supporting text -->
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txtTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                     android:layout_marginEnd="6dp"
                     app:srcCompat="@drawable/baseline_watch_later_24" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/txtSubTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
                     app:srcCompat="@drawable/baseline_location_on_20"
                     />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/txtDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -104,7 +104,7 @@
                 android:id="@+id/btnAttendance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Join" />
+                android:text="Join" />
         </LinearLayout>
 
     </LinearLayout>

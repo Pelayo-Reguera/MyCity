@@ -13,6 +13,7 @@
     android:layout_margin="@dimen/carousel_img_horizontal_margin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.ExtraLarge"
     app:flow_horizontalAlign="start">
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -21,6 +22,5 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/img_event_description"
         android:scaleType="centerCrop"
-        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.ExtraLarge"
         app:srcCompat="@drawable/add_image" />
 </com.google.android.material.carousel.MaskableFrameLayout>

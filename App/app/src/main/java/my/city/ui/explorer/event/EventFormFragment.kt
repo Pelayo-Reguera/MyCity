@@ -64,11 +64,12 @@ import java.time.format.DateTimeFormatter
  * */
 class EventFormFragment : Fragment(R.layout.fragment_event_form), DialogListeners {
 
+    /** Used to know the current position of the user for better results in locations search*/
     private lateinit var androidLocationProvider: LocationProvider
 
     /** [EventCreationVM] instance for storing the information of the event being created*/
     private val eventVM: EventCreationVM by navGraphViewModels(R.id.event_form_navigation)
-    private val globalEventsVM: EventsListVM by activityViewModels()
+    private val eventsListVM: EventsListVM by activityViewModels()
 
     private lateinit var binding: FragmentEventFormBinding
     private val rvEventImages: RecyclerView by lazy { binding.rvEventImages }
@@ -300,7 +301,7 @@ class EventFormFragment : Fragment(R.layout.fragment_event_form), DialogListener
             }
 
             if (isValid) {
-                globalEventsVM.addEvent(
+                eventsListVM.addEvent(
                     Event(
                         eventVM.name,
                         eventVM.eventDrawables,
