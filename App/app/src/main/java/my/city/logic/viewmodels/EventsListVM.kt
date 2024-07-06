@@ -13,14 +13,14 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.launch
 import my.city.database.RemoteDatabase
+import my.city.database.RemoteStorage
 import my.city.database.Tags
 import my.city.logic.Event
 
 enum class State {
-    IN_PROCESS, SUCCESS, FAILURE
+    IN_PROCESS, SUCCESS, FAILURE, FINISHED
 }
 
 class EventsListVM : ViewModel() {
@@ -28,36 +28,26 @@ class EventsListVM : ViewModel() {
     //INFO: Try to change it to a a HasMap or LinkedHasMap
     val events: MutableLiveData<MutableList<Event>> = MutableLiveData(mutableListOf())
         get() {
-            RemoteDatabase.getEvents({ it ->
-                val list: MutableList<Event> = field.value ?: mutableListOf()
-                for (document in it.documents) {
-                    // For each document, convert it to an Event and request its images
-                    try {
-                        document.toObject<Event>()?.let { event ->
-                            event.id = document.id
-                            list.add(event)
-                            viewModelScope.launch {
-                                event.eventImgURIs.lastOrNull()?.let { uri ->
-                                    val segments = Uri.parse(uri).pathSegments
-                                    val path = segments.joinToString(
-                                        "/",
-                                        limit = segments.lastIndex,
-                                        truncated = ""
-                                    )
-                                    RemoteDatabase.downloadImages(path, event.eventDrawables)
-                                }
-                                // It is required to do this with coroutines because when all the drawables
-                                // are downloaded the list need to be updated in order to refresh the
-                                // the views
-                            }.invokeOnCompletion { field.value = list }
-                        }
-                    } catch (re: RuntimeException) {
-                        Log.e("EventsListVM", "An object is not well constructed in the database")
+            RemoteDatabase.getEvents(field, { list, event ->
+                // Download the images and load them in the Event
+                viewModelScope.launch {
+                    event.eventImgURIs.lastOrNull()?.let { uri ->
+                        val segments = Uri.parse(uri).pathSegments
+                        val path = segments.joinToString(
+                            "/",
+                            limit = segments.lastIndex,
+                            truncated = ""
+                        )
+                        RemoteStorage.downloadImages(path, event.eventDrawables)
                     }
+                    // It is required to do this with coroutines because when all the drawables
+                    // are downloaded the list need to be reattached in order to refresh the
+                    // the views
+                }.invokeOnCompletion {
+                    field.value = list
                 }
-                field.value = list
             }, {
-                Log.w(Tags.REMOTE_DATABASE_ERROR.toString(), it.message.toString())
+                Log.e(Tags.REMOTE_DATABASE.toString(), it.message.toString())
             })
             return field
         }
@@ -87,7 +77,7 @@ class EventsListVM : ViewModel() {
                 onSuccess()
             }, {
                 processState = State.FAILURE
-                Log.e(Tags.REMOTE_DATABASE_ERROR.toString(), it.message.toString())
+                Log.e(Tags.REMOTE_DATABASE.toString(), it.message.toString())
             })
         }
     }
