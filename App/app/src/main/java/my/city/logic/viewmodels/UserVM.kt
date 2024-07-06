@@ -8,98 +8,298 @@
 
 package my.city.logic.viewmodels
 
-import android.content.Intent
-import androidx.activity.result.ActivityResultLauncher
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
+import com.tomtom.sdk.location.GeoPoint
 import my.city.database.RemoteDatabase
-import my.city.logic.User
+import my.city.database.RemoteStorage
+import my.city.database.Tags
+import my.city.logic.Event
+import java.io.File
 
-//TODO: Make the properties of User observable with LiveData
+/**
+ * It represents all the information of the user currently using the app. Its purpose is to keep the
+ * information available in all the application and be a communication channel between the UI and
+ * the [database layer][RemoteDatabase]
+ */
 class UserVM : ViewModel() {
 
-    var user: User = User("", "", "", mutableListOf(), mutableMapOf(), true)
-        private set
+    var userName: MutableLiveData<String> = MutableLiveData("")
+    var email: String = ""
+    var profilePhoto: MutableLiveData<Pair<String, Drawable>> = MutableLiveData()
+    var location: GeoPoint = GeoPoint(39.56885126840019, -3.301451387486932) //Spain
+
+    /** A list of friends containing only their user names and profile photos */
+    var friends: MutableList<Pair<String, Drawable>> = mutableListOf()
+    val createdEvents: MutableLiveData<MutableList<Event>> = MutableLiveData()
+    val likedEvents: MutableLiveData<MutableList<Event>> = MutableLiveData()
+    val joinedEvents: MutableLiveData<MutableList<Event>> = MutableLiveData()
+    val coins: MutableLiveData<MutableMap<String, Int>> = MutableLiveData()
+    var birthdate: Timestamp = Timestamp.now()
+    var gender: String = ""
+    var isAnonymous: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    /** Whether the user is connected to internet or not */
     var isConnected = false
-    private var currentUser: FirebaseUser? = Firebase.auth.currentUser
-    lateinit var signInLauncher: ActivityResultLauncher<Intent>
+    val currentUser: MutableLiveData<FirebaseUser> = MutableLiveData(Firebase.auth.currentUser)
 
-    fun signIn() {
-        if (currentUser == null) {
-            // Chosen authentication providers
-            val providers = arrayListOf(
-                AuthUI.IdpConfig.EmailBuilder().build(),
-                AuthUI.IdpConfig.AnonymousBuilder().build(),
-            )
-
-            // Create and launch sign-in intent
-            val signInIntent = AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
-                .build()
-            signInLauncher.launch(signInIntent)
-            currentUser = Firebase.auth.currentUser
-        }
+    /**
+     * This function creates a user with the email and password given in the database of authentications.
+     *
+     * When the user was correctly created, then updates the displayName of the [auth] property with
+     * the [userName] to be consistent the information stored in the user information from the authenticator
+     * with the user's document stored in the general database. Once this has been done, the token
+     * for the authenticated user is requested in order to use it in all later transactions with the
+     * database rules.
+     *
+     * If everything was completely successfully it proceeds to store all the information
+     * provided by the user in documents in the general database
+     *
+     * @param imgProfile The [Uri] to the file stored in the local device
+     * @param userName First user name established by the user. It can be edited by the user in the future
+     * to show the new one to other users, but the ID of the documents will remain the same and the new created
+     * ones will still use the original user name
+     * @param email The email given by the user when crating the account
+     * @param password
+     * @param location The city chosen by the user as the default location when creating the account
+     * @param birthDate
+     * @param gender
+     * @param onSuccess Actions to do when user's document was created successfully
+     * @param onFailure Actions to do when an error arose (normally show them in the UI to the user)
+     *
+     * @see [createUserData]
+     * */
+    fun signIn(
+        imgProfile: Uri?,
+        userName: String,
+        email: String,
+        password: String,
+        location: GeoPoint,
+        birthDate: Timestamp,
+        gender: String,
+        onSuccess: () -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        Firebase.auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                // Sign in success, update UI with the signed-in user's information
+                // We need to set that the token must be updated continuously otherwise connections with
+                // the database don't work
+                currentUser.value = it.user
+                currentUser.value?.let { user ->
+                    user.updateProfile(userProfileChangeRequest {
+                        displayName = userName
+                    }).addOnCompleteListener { _ ->
+                        // Needed to check in the server that the document being created is for the
+                        // user trying to created and not other one (impostor)
+                        currentUser.value?.getIdToken(true)?.addOnSuccessListener { _ ->
+                            createUserData(
+                                user,
+                                imgProfile,
+                                location,
+                                birthDate,
+                                gender,
+                                onSuccess,
+                                onFailure
+                            )
+                        }?.addOnFailureListener {
+                            // If sign in fails, display a message to the user.
+                            onFailure(Tags.SIGNING_ERROR)
+                        }
+                    }.addOnFailureListener {
+                        // If sign in fails, display a message to the user.
+                        onFailure(Tags.SIGNING_ERROR)
+                    }
+                }
+            }.addOnFailureListener {
+                // If sign in fails, display a message to the user.
+                Log.w(
+                    Tags.EXISTING_EMAIL.toString(),
+                    "The email is already registered for another user",
+                    it
+                )
+                onFailure(Tags.EXISTING_EMAIL)
+            }
+        Log.d("SIGNIN", "Iniciando sesión")
     }
 
-    private fun setUserData() {
-        currentUser?.let {
-            user = User(
-                it.displayName.toString(),
-                it.email.toString(),
-                it.photoUrl.toString(),
-                mutableListOf(),
-                mutableMapOf(),
-                it.isAnonymous,
-            )
-        }
-
-        RemoteDatabase.user = user
+    /**
+     * This function retrieves the basic information of an account stored in the authentications
+     * database given an email and a password.
+     * When the user was correctly authenticated, it calls [getUserData] for getting all its stored
+     * data
+     *
+     * @param email
+     * @param password
+     * @param onSuccess Actions to do when the user's information was successfully collected
+     * @param onFailure Actions to do in case it was nos possible to complete the request
+     */
+    fun logIn(
+        email: String,
+        password: String,
+        onSuccess: () -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        Firebase.auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
+            // Log in success, update UI with the signed-in user's information
+            // We need to set that the token must be updated continuously otherwise connections with
+            // the database don't work
+            currentUser.value = it.user
+            Firebase.auth.getAccessToken(true)
+                .addOnSuccessListener {
+                    currentUser.value?.let { user -> getUserData(user, onSuccess, onFailure) }
+                }.addOnFailureListener { onFailure(Tags.LOGIN_ERROR) }
+        }.addOnFailureListener { onFailure(Tags.LOGIN_FAIL) }
     }
 
-    fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
-        //TODO: Add some behaviour to the response
-        val response = result.idpResponse
-        if (result.resultCode == AppCompatActivity.RESULT_OK) {
-            // Successfully signed in
-            setUserData()
-        } else {
-            // Sign in failed. If response is null the user canceled the
-            // sign-in flow using the back button. Otherwise check
-            // response.getError().getErrorCode() and handle the error.
-            // ...
-        }
+    /**
+     * It requests to the [database layer][RemoteDatabase] the information stored about the provided
+     * user
+     *
+     * @param userData [FirebaseUser] with basic information to identify its documents
+     * @param onSuccess Actions to do when the user's information was successfully collected
+     * @param onFailure Actions to do in case it was nos possible to complete the request
+     *
+     * @see [RemoteDatabase.getPublicAndPrivateUserInfo]
+     * */
+    private fun getUserData(
+        userData: FirebaseUser,
+        onSuccess: () -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        RemoteDatabase.getPublicAndPrivateUserInfo(
+            userData.displayName.toString(), { user ->
+                Log.d(
+                    "SIGNIN",
+                    "Documento de usuario obtenido $user"
+                )
+                userName.value = user.name
+                email = user.email
+                location = GeoPoint(user.location.latitude, user.location.longitude)
+                coins.value = user.coins
+                gender = user.gender
+                birthdate = user.birthdate
+                onSuccess()
+                RemoteStorage.downloadProfilePhoto(
+                    user.name,
+                    { url: String, file: File ->
+                        Log.d(
+                            "SIGNIN",
+                            "File descargado $file"
+                        )
+                        Drawable.createFromPath(file.path)?.let { drawable ->
+                            profilePhoto.value = Pair(url, drawable)
+                            Log.d(
+                                "SIGNIN",
+                                "Drawable guardado ${Pair(url, drawable)}"
+                            )
+                        }
+                    },
+                    onFailure
+                )
+            },
+            onFailure
+        )
     }
 
-//    suspend fun getUser(): String {
-////        if (user.userName.isBlank()) {
-////            result = RemoteDatabase.getProfileInfo().await()["email"].toString()
-//        val result: DocumentSnapshot?
-//        if (currentUser == null) {
-//            // Chosen authentication providers
-//            val providers = arrayListOf(
-//                AuthUI.IdpConfig.EmailBuilder().build(),
-//            )
-//
-//            // Create and launch sign-in intent
-//            val signInIntent = AuthUI.getInstance()
-//                .createSignInIntentBuilder()
-//                .setAvailableProviders(providers)
-//                .build()
-//            signInLauncher.launch(signInIntent)
-//        }
-//        result = RemoteDatabase.getProfileInfo()
-////        }
-//
-//        // If result != null then the block of code inside let is executed. In this block "email" key
-//        // is accessed and converted its value to a String
-//        // If result == null then returns an empty String
-//        //TODO: Return the whole user object
-//        return result?.let { return it["email"] as String } ?: ""
-//    }
+    /**
+     * It requests to the [database layer][RemoteDatabase] to store in documents the user's information
+     * from the one provided by the user when signing in and the one actually saved in the [auth] object
+     *
+     * @param userData User information saved in the authentication database
+     * @param imgProfile Path to the image stored in the local device for the user's profile
+     * @param location The default location of the user
+     * @param birthDate
+     * @param gender
+     * @param onSuccess Actions to do when all the user's data was saved successfully
+     * @param onFailure Actions to do when an error arose (normally show them in the UI to the user)
+     *
+     * @see [RemoteDatabase.createUserInfo]
+     * */
+    private fun createUserData(
+        userData: FirebaseUser,
+        imgProfile: Uri?,
+        location: GeoPoint,
+        birthDate: Timestamp,
+        gender: String,
+        onSuccess: () -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        Log.d("SIGNIN", "Documento de usuario creandose")
+        RemoteDatabase.createUserInfo(
+            userData.displayName.toString(),
+            userData.email.toString(),
+            userData.uid,
+            com.google.firebase.firestore.GeoPoint(location.latitude, location.longitude),
+            birthDate,
+            gender,
+            {
+                Log.d(
+                    "SIGNIN",
+                    "Comienzo del proceso de photoUrl"
+                )
+                userName.value = userData.displayName.toString()
+                email = userData.email.toString()
+                this.location = location
+                onSuccess()
+                imgProfile?.let { photo ->
+                    Log.d(
+                        "SIGNIN",
+                        "Descargando drawable de URL"
+                    )
+
+                    RemoteStorage.storeProfilePhoto(
+                        photo,
+                        userData.displayName.toString(),
+                        { url ->
+                            Log.d(
+                                "SIGNIN",
+                                "Transformando drawable a file"
+                            )
+                            Drawable.createFromPath(photo.path)?.let { drawable ->
+                                currentUser.value?.updateProfile(userProfileChangeRequest {
+                                    photoUri = Uri.parse(url)
+                                })
+                                profilePhoto.value = Pair(url, drawable)
+                                Log.d(
+                                    "DRAWABLE",
+                                    "Drawable creado y guardado ${Pair(url, drawable)}"
+                                )
+                            }
+                        },
+                        onFailure
+                    )
+                }
+                Log.d(
+                    "SIGNIN",
+                    "Fin del proceso de photoUrl"
+                )
+            }, onFailure
+        )
+    }
+
+
+    /**
+     * Sing out the user's account
+     */
+    fun singOut() {
+        //INFO: Improve it by passing it to the anonymous account
+        Firebase.auth.signOut()
+    }
+
+    /**
+     * Delete the user's account from the authentications database
+     */
+    fun deleteAccount() {
+        //INFO: Improve it by deleting or marking for deletion the user data in documents
+        Firebase.auth.currentUser?.delete()
+    }
 }
