@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+
+<resources>
+    <string-array name="gender_values">
+        <item>@string/array_gender_male</item>
+        <item>@string/array_gender_female</item>
+        <item>@string/array_gender_other</item>
+    </string-array>
+</resources>

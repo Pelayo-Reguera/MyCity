@@ -115,16 +115,6 @@
     <string name="tabiChallenge">RETOS</string>
     <string name="nav_event">Evento</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
     <!--    Context-dependent text-->
     <string name="nav_event_creation">Crear evento</string>
     <string name="event_form_txteEventName">Nombre del evento*</string>
@@ -146,4 +136,36 @@
     <string name="location_not_selected">Ubicación no seleccionada</string>
     <string name="internet_connection_error">Error de conexión</string>
     <string name="event_form_txteEventEndDate_error">No puede ser anterior a la fecha de inicio</string>
+    <string name="event_form_txteEventNGuests">Nº Participantes</string>
+    <string name="ten_value" translatable="false">10</string>
+    <string name="event_form_txteEventNGuests_error">Mínimo 10 personas</string>
+    <string name="event_form_txteEventOrganizers">Nombres de organizadores*</string>
+    <string name="unknown">Desconocido</string>
+    <string name="btnAttendance">Unirse</string>
+    <string name="menu_signOut">Cerrar sesión</string>
+    <string name="user_form_txtName">\@nombre_usuario</string>
+    <string name="user_form_txteEmail">ejemplo@gmail.com</string>
+    <string name="user_form_txtUserBirthday">F. Nacimiento*</string>
+    <string name="user_form_txtPassword">Contraseña*</string>
+    <string name="user_form_txtGender">Género*</string>
+    <string name="user_form_btnLogIn">Iniciar sesión</string>
+    <string name="user_form_btnSignIn">Registrarse</string>
+    <string name="user_form_txteEmail_error">Formato incorrecto</string>
+    <string name="user_form_txtePsswrd_lowerCase_error">Debe haber al menos una letra minúscula</string>
+    <string name="user_form_txtePsswrd_upperCase_error">Debe haber al menos una letra mayúscula</string>
+    <string name="user_form_txtePsswrd_number_error">Debe haber al menos un número</string>
+    <string name="user_form_txtePsswrd_specialChar_error">Debe haber al menos un carácter especial</string>
+    <string name="user_form_txtePsswrd_length_error">Mínimo 8 caracteres</string>
+    <string name="user_form_txteConfirmPsswrd_error">Las contraseñas no coinciden</string>
+    <string name="user_form_txteUserBirthdate_error">No puedes ser menor de 15 años</string>
+    <string name="server_error">Ha surgido un problema con el servidor</string>
+    <string name="array_gender_male">Hombre</string>
+    <string name="array_gender_female">Mujer</string>
+    <string name="array_gender_other">Otro</string>
+    <string name="user_form_txteName_error">Este nombre de usuario ya existe</string>
+    <string name="signIn_existingEmail_err">Este correo ya está siendo utilizado</string>
+    <string name="signIn_profilePhoto_error">La foto de perfil no ha sido posible guardarla</string>
+    <string name="logIn_error">Usuario o contraseña incorrectos</string>
+    <string name="logIn_profileDoc_error">Información corrupta en el servidor</string>
+    <string name="logIn_profilePhoto_error">La foto de perfil no se ha podido cargar</string>
 </resources>
