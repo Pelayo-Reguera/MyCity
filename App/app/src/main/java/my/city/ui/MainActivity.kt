@@ -21,16 +21,16 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import my.city.R
 import my.city.databinding.ActivityMainBinding
@@ -60,13 +60,6 @@ class MainActivity : AppCompatActivity() {
         //INFO: Try to improve the splash screen using an animated icon
         installSplashScreen()
         runBlocking {
-            launch {
-                userVm.signInLauncher = registerForActivityResult(
-                    FirebaseAuthUIActivityResultContract(),
-                ) { res ->
-                    userVm.onSignInResult(res)
-                }
-            }
             delay(1000)
         }
 
@@ -91,7 +84,8 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.fragment_events_explorer,
                 R.id.fragment_map,
-                R.id.fragment_profile
+                R.id.fragment_profile,
+                R.id.fragment_log_in
             )
         )
         val navView: BottomNavigationView = binding.navView
@@ -101,11 +95,26 @@ class MainActivity : AppCompatActivity() {
         // The navView is also configured with the navController to show the fragment corresponding
         // to the icon pressed
         navView.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener {
+                _,
+                destination: NavDestination,
+                _,
+            ->
+            when (destination.id) {
+                R.id.fragment_log_in, R.id.fragment_sign_in -> {
+                    navView.isVisible = false //Hide the bottom navigation
+                    supportActionBar?.title =
+                        null //Hide the top toolbar's title set as the ActionBar
+                }
+
+                else -> navView.isVisible = true
+            }
+        }
     }
 
     override fun onStart() {
         super.onStart()
-
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.CHANGE_NETWORK_STATE
@@ -138,8 +147,6 @@ class MainActivity : AppCompatActivity() {
                 )
             )
         }
-
-        userVm.signIn()
     }
 
     private fun internetConfig() {

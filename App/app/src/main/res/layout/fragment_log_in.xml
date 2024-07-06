@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.carousel.MaskableFrameLayout
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginVertical="50dp"
+        android:layout_gravity="top|center">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animIcon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/city_animation" />
+    </com.google.android.material.carousel.MaskableFrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="24dp"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txtEmail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="10dp"
+            android:labelFor="@+id/txteEmail"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            app:errorEnabled="true"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txteEmail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/user_form_txteEmail"
+                android:inputType="text|textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txtPassword"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="10dp"
+            android:labelFor="@+id/txtePassword"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            app:errorEnabled="true"
+            app:endIconMode="password_toggle">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtePassword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/user_form_txtPassword"
+                android:inputType="text|textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogIn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/fab_margin"
+            android:layout_marginBottom="3dp"
+            android:text="@string/user_form_btnLogIn"
+            android:textSize="18sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSignIn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="@dimen/fab_margin"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:clickable="true"
+            android:text="@string/user_form_btnSignIn"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginVertical="50dp"
+        style="@style/TextAppearance.Material3.TitleLarge"
+        android:text="@string/app_name" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

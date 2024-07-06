@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nested_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="24dp"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="30dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imgUser"
+                android:layout_width="@dimen/img_sigInprofile_size"
+                android:layout_height="@dimen/img_sigInprofile_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+                app:srcCompat="@drawable/default_profile" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btniEditImg"
+                style="@style/Widget.Material3.Button.IconButton.Filled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp"
+                app:icon="@drawable/baseline_edit_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/imgUser"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/imgUser"
+                app:layout_constraintTop_toTopOf="@+id/imgUser"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btniRemoveImg"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                app:icon="@drawable/baseline_remove_circle_24"
+                app:iconTint="@color/red"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/imgUser"
+                app:layout_constraintHorizontal_bias="0.454"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txtName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:labelFor="@+id/txteName"
+            android:layout_marginVertical="10dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            app:prefixText="\@"
+            app:errorEnabled="true"
+            app:counterMaxLength="@integer/user_max_legth"
+            app:counterEnabled="true"
+            app:endIconMode="clear_text"
+            app:helperText="@string/textRequired">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txteName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxLength="@integer/user_max_legth"
+                android:hint="@string/user_form_txtName"
+                android:inputType="text|textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txtEmail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="10dp"
+            android:labelFor="@+id/txteEmail"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            app:errorEnabled="true"
+            app:endIconMode="clear_text"
+            app:helperText="@string/textRequired">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txteEmail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/user_form_txteEmail"
+                android:inputType="text|textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txtPassword"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="10dp"
+            android:labelFor="@+id/txtePassword"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            app:errorEnabled="true"
+            app:endIconMode="password_toggle"
+            app:helperText="@string/textRequired">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtePassword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/user_form_txtPassword"
+                android:inputType="text|textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txtConfirmationPassword"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="10dp"
+            android:labelFor="@+id/txteConfirmationPassword"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            app:errorEnabled="true"
+            app:endIconMode="password_toggle"
+            app:helperText="@string/textRequired">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txteConfirmationPassword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/user_form_txtPassword"
+                android:inputType="text|textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txtLocation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="10dp"
+            android:labelFor="@+id/txteLocation"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            app:errorEnabled="true"
+            app:endIconMode="clear_text"
+            app:helperText="@string/textRequired">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txteLocation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/event_form_txteEventLocation"
+                android:inputType="text|textPostalAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.tomtom.sdk.search.ui.SearchResultsView
+            android:id="@+id/search_results_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="10dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtUserBirthday"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"
+                android:labelFor="@+id/txteUserBirthday"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                app:errorEnabled="true"
+                app:startIconDrawable="@drawable/outline_calendar_month_24"
+                app:helperText="@string/textRequired">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txteUserBirthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="@string/user_form_txtUserBirthday"
+                    android:inputType="datetime|date" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtGender"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:labelFor="@+id/txteGender"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                app:startIconDrawable="@drawable/round_transgender_24"
+                app:endIconMode="dropdown_menu"
+                app:errorEnabled="true"
+                app:helperText="@string/textRequired">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/txteGender"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/user_form_txtGender"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    app:simpleItems="@array/gender_values" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnReady"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/fab_margin"
+            android:text="@string/event_form_fabEventCreate"
+            android:textSize="18sp" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
