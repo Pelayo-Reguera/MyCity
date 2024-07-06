@@ -16,6 +16,7 @@
     <color name="orange_surface">#FFECDF</color>
     <color name="yellow">#F0CE00</color>
     <color name="brown">#7C5900</color>
+    <color name="brown_transparent">#6B7C5900</color>
     <color name="transparent_brown">#32BD8A08</color>
     <color name="red">#D50000</color>
 </resources>

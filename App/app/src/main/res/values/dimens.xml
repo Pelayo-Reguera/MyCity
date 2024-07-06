@@ -10,13 +10,17 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="edit_text_view_height">56dp</dimen>
+    <dimen name="edit_text_view_padding">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="text_min_width">150dp</dimen>
-    <dimen name="text_max_width">488dp</dimen>
+    <dimen name="text_max_width">300dp</dimen>
     <dimen name="text_max_height">500dp</dimen>
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="img_recycler_view_item">40dp</dimen>
+    <dimen name="img_profile_size">240dp</dimen>
+    <dimen name="img_sigInprofile_size">125dp</dimen>
     <dimen name="carousel_height">260dp</dimen>img_card
     <dimen name="img_card_height">194dp</dimen>
     <dimen name="list_img_size">56dp</dimen>

@@ -8,5 +8,7 @@
   -->
 
 <resources>
-    <integer name="name_legth">40</integer>
+    <integer name="event_max_legth">40</integer>
+    <integer name="user_max_legth">20</integer>
+    <integer name="min_guests_capacity">10</integer>
 </resources>
