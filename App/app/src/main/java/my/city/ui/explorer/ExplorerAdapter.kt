@@ -45,7 +45,8 @@ class ExplorerAdapter(private val eventsList: List<Event>) :
             }
             txtTitle.text = event.name
             txtSubTitle.text =
-                event.startLocalDateTime().format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
+                event.getStartLocalDateTime()
+                    .format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
             txtDescription.text = event.street
             // Behaviour of the card
             view.setOnClickListener { card ->

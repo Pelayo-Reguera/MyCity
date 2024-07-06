@@ -34,21 +34,22 @@ class EventInfoFragment : Fragment(R.layout.fragment_event_info) {
             binding.txtInfoTitle.text = it.name
 
             val value: Int =
-                it.startLocalDateTime().toLocalDate().compareTo(it.endLocalDateTime().toLocalDate())
+                it.getStartLocalDateTime().toLocalDate()
+                    .compareTo(it.getEndLocalDateTime().toLocalDate())
             when {
                 value < 0 -> {
-                    binding.txtInfoStartDateAndHour.text = it.startLocalDateTime()
+                    binding.txtInfoStartDateAndHour.text = it.getStartLocalDateTime()
                         .format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
-                    binding.txtInfoEndDateAndHour.text = it.endLocalDateTime()
+                    binding.txtInfoEndDateAndHour.text = it.getEndLocalDateTime()
                         .format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
                 }
 
                 value == 0 -> {
                     binding.txtInfoStartDateAndHour.text = "${
-                        it.startLocalDateTime()
+                        it.getStartLocalDateTime()
                             .format(DateTimeFormatter.ofPattern("HH:mm - "))
                     } ${
-                        it.endLocalDateTime()
+                        it.getEndLocalDateTime()
                             .format(DateTimeFormatter.ofPattern("HH:mm"))
                     }"
                     binding.txtInfoEndDateAndHour.isVisible = false

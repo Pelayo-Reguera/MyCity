@@ -32,7 +32,7 @@ class CustomBalloonViewAdapter(private val context: Context, private val events:
         }
         view.findViewById<MaterialTextView>(R.id.txtEventName).text = event.name
         view.findViewById<MaterialTextView>(R.id.txtStartEventDate).text =
-            event.startLocalDateTime().format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
+            event.getStartLocalDateTime().format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
 
         view.setOnClickListener {
             it.findNavController().navigate(MapFragmentDirections.toFragmentEvent(event.id))

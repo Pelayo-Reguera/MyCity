@@ -25,7 +25,7 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="10dp"
             android:labelFor="@+id/txteChallengeName"
-            app:counterMaxLength="@integer/name_legth"
+            app:counterMaxLength="@integer/event_max_legth"
             app:counterEnabled="true"
             app:errorEnabled="true"
             app:endIconMode="clear_text"
@@ -35,7 +35,7 @@
                 android:id="@+id/txteChallengeName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:maxLength="@integer/name_legth"
+                android:maxLength="@integer/event_max_legth"
                 android:hint="@string/challenge_form_txteChallengeName"
                 android:inputType="text|textPersonName"
                 android:singleLine="true" />
