@@ -20,7 +20,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -95,8 +95,8 @@
 
         <!-- Buttons -->
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:orientation="horizontal">
 
@@ -104,8 +104,8 @@
                 android:id="@+id/btnAttendance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Join" />
+                android:layout_gravity="start|bottom"
+                android:text="@string/btnAttendance" />
         </LinearLayout>
-
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
