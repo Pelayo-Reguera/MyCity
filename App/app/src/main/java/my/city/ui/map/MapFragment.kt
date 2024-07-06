@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.tomtom.sdk.location.GeoPoint
 import com.tomtom.sdk.location.LocationProvider
 import com.tomtom.sdk.location.android.AndroidLocationProvider
@@ -31,6 +32,7 @@ import com.tomtom.sdk.map.display.ui.MapFragment
 import my.city.R
 import my.city.databinding.FragmentMapBinding
 import my.city.logic.viewmodels.EventsListVM
+import my.city.logic.viewmodels.UserVM
 
 /**
  * [Fragment] containing a map where events close to a location are shown in pins
@@ -44,6 +46,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     private lateinit var binding: FragmentMapBinding
     private val mapFragment: MapFragment by lazy { binding.mapFragment.getFragment() }
     private val eventsListVM: EventsListVM by activityViewModels()
+    private val userVM: UserVM by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,8 +65,13 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             })
             it.setLocationProvider(androidLocationProvider)
             it.enableLocationMarker(LocationMarkerOptions(type = LocationMarkerOptions.Type.Pointer))
-            it.moveCamera(CameraOptions(zoom = 10.0))
-            
+            it.moveCamera(
+                CameraOptions(
+                    position = androidLocationProvider.lastKnownLocation?.position
+                        ?: userVM.location,
+                    zoom = 10.0
+                )
+            )
             eventsListVM.events.value?.forEachIndexed { pos, event ->
                 it.addMarker(
                     MarkerOptions(
@@ -97,41 +105,46 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        androidLocationProvider = AndroidLocationProvider(
-            requireContext()
-        )
-
-        if (ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            androidLocationProvider.enable()
+        if (userVM.currentUser.value == null) {
+            findNavController().navigate(MapFragmentDirections.toFragmentLogIn())
         } else {
-            val locationPermissionRequest = registerForActivityResult(
-                ActivityResultContracts.RequestMultiplePermissions()
-            ) { permissions ->
-                var isGranted =
-                    permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false)
-                isGranted = isGranted && permissions.getOrDefault(
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    false
-                )
+            androidLocationProvider = AndroidLocationProvider(requireContext())
 
-                if (isGranted) {
-                    androidLocationProvider.enable()
-                }
-            }
-
-            locationPermissionRequest.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
+            if (ContextCompat.checkSelfPermission(
+                    context,
                     Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                androidLocationProvider.enable()
+            } else {
+                val locationPermissionRequest = registerForActivityResult(
+                    ActivityResultContracts.RequestMultiplePermissions()
+                ) { permissions ->
+                    var isGranted =
+                        permissions.getOrDefault(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            false
+                        )
+                    isGranted = isGranted && permissions.getOrDefault(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        false
+                    )
+
+                    if (isGranted) {
+                        androidLocationProvider.enable()
+                    }
+                }
+
+                locationPermissionRequest.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
                 )
-            )
+            }
         }
     }
 }
