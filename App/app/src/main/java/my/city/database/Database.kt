@@ -8,43 +8,20 @@
 
 package my.city.database
 
-import android.graphics.drawable.Drawable
-import android.net.Uri
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import my.city.logic.Challenge
 import my.city.logic.Event
 import my.city.logic.User
-import java.io.File
-
-enum class Tags {
-    REMOTE_DATABASE_ERROR
-}
-
-enum class RemoteDBCollections(val value: String) {
-    COINS("coins"), EVENTS("events"), USERS("users"), CREATED_EVENTS("createdEvents"),
-    JOINED_EVENTS("joinedEvents"), LIKED_EVENTS("likedEvents"),
-    CHALLENGES("challenges"), GUESTS("guests")
-}
-
-enum class RemoteDBFields(val value: String) {
-    START_EVENT("startEvent")
-}
 
 /*
  * TODO: Check if any pattern could be apply here (there is one when you need like different
@@ -55,22 +32,15 @@ enum class RemoteDBFields(val value: String) {
  * */
 object RemoteDatabase {
 
-    lateinit var user: User
-
     /** This property is used for pagination purposes*/
     private var lastEvent: Event? = null
 
     /** This property is used for limit the number of results*/
     private var maxNResults: Long = 50
 
-    suspend fun getProfileInfo(): DocumentSnapshot? {
-        val db = Firebase.firestore
-        //TODO: Change the hardcoded string in the document path
-        return db.collection(RemoteDBCollections.USERS.value).document("admin").get().await()
-    }
-
     suspend fun getUserCreatedEvents(): QuerySnapshot? {
         val db = Firebase.firestore
+
         //TODO: Change the hardcoded string in the document path
         return db.collection(RemoteDBCollections.USERS.value).document("admin")
             .collection(RemoteDBCollections.CREATED_EVENTS.value).get().await()
@@ -91,19 +61,259 @@ object RemoteDatabase {
     }
 
     /**
+     *  It requests all the information attached to a user specified by its name both public and private
+     *  <b> except the collections related to it like the events joined, friends, etc </b>
+     *
+     *  @param userName The one when the account was created
+     *  @param onSuccess Actions to do when the user's information was successfully collected
+     *  @param onFailure Actions to do in case it was nos possible to complete the request
+     * */
+    fun getPublicAndPrivateUserInfo(
+        userName: String,
+        onSuccess: (User) -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        // The getPublicUserInfo function is called and in case it was successful a
+        // request to the private information about the user is made. Similar to the Wrapper Pattern
+        getPublicUserInfo(userName, { user ->
+            val db = Firebase.firestore
+            val doc = db.collection(RemoteDBCollections.USERS.value).document(userName)
+            doc.collection(RemoteDBCollections.PRIVATE.value).document(userName).get()
+                .addOnSuccessListener { result ->
+                    //INFO: Check if the outer try-catch controls an exception in this
+                    // conversion
+                    val privateInfo: User? = result.toObject<User>()
+                    if (privateInfo != null) {
+                        privateInfo.name = user.name
+                        privateInfo.location = user.location
+                        privateInfo.gender = user.gender
+                        onSuccess(privateInfo)
+                    } else {
+                        Log.i(
+                            Tags.PROFILE_DOCUMENT.toString(),
+                            "The user's private document doesn't exists"
+                        )
+                        onFailure(Tags.PROFILE_DOCUMENT_ERROR)
+                    }
+                }.addOnFailureListener {
+                    Log.w(
+                        Tags.PROFILE_DOCUMENT.toString(),
+                        "The private information of the user couldn't be downloaded",
+                        it
+                    )
+                    onFailure(Tags.LOGIN_ERROR)
+                }
+        }, onFailure)
+    }
+
+    /**
+     * Collects all the user's public information attached to the name provided
+     *
+     * @param userName
+     * @param onSuccess Actions to do when the user's information was successfully collected
+     * @param onFailure Actions to do in case it was nos possible to complete the request
+     * */
+    fun getPublicUserInfo(userName: String, onSuccess: (User) -> Unit, onFailure: (Tags) -> Unit) {
+        val db = Firebase.firestore
+        //INFO: Try to use the name saved in its own document as a field instead of the document ID
+        val doc = db.collection(RemoteDBCollections.USERS.value).document(userName)
+        Log.d(
+            "SIGNIN",
+            "Creando solicitud del documento del usuario $doc"
+        )
+        doc.get().addOnSuccessListener { docResult ->
+            Log.i(
+                "SIGNIN",
+                "Documento de usuario solicitado con id ${docResult.id} y data ${docResult.data}"
+            )
+            try {
+                val user: User? = docResult.toObject<User>()
+                if (user != null) {
+                    Log.i(
+                        "SIGNIN",
+                        "Usuario creado parcialmente $user"
+                    )
+                    onSuccess(user)
+                } else {
+                    Log.i(
+                        Tags.PROFILE_DOCUMENT.toString(),
+                        "The user's document doesn't exists"
+                    )
+                    onFailure(Tags.PROFILE_DOCUMENT_ERROR)
+                }
+                Log.d(
+                    "SIGNIN",
+                    "Proceso Usuario finalizado"
+                )
+            } catch (re: RuntimeException) {
+                Log.e(
+                    Tags.REMOTE_DATABASE.toString(),
+                    "An object of type User is not well constructed in the database", re
+                )
+                onFailure(Tags.PROFILE_DOCUMENT_ERROR)
+            }
+        }.addOnFailureListener {
+            Log.e(
+                "SIGNIN",
+                "Error when retrieving the user's document", it
+            )
+            onFailure(Tags.LOGIN_ERROR)
+        }
+    }
+
+    /**
+     * Creates the document associated with the user and its private information in the remote database
+     *
+     * @param name The original user name when its account was created
+     * @param email The user's email
+     * @param uid The uid of the user for the Firebase present in the token
+     * @param location Default location of the user
+     * @param birthDate
+     * @param gender
+     * @param onSuccess Actions to do when user's documents were created successfully
+     * @param onFailure Actions to do when an error arose (normally show them in the UI to the user)
+     * */
+    fun createUserInfo(
+        name: String,
+        email: String,
+        uid: String,
+        location: GeoPoint,
+        birthDate: Timestamp,
+        gender: String,
+        onSuccess: () -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        val db = Firebase.firestore
+        val docRef = db.collection(RemoteDBCollections.USERS.value).document(name)
+        docRef.set(
+            hashMapOf(
+                RemoteDBFields.NAME.value to name,
+                RemoteDBFields.LOCATION.value to location,
+                RemoteDBFields.GENDER.value to gender
+            )
+        ).addOnSuccessListener {
+            Log.d(
+                "SIGNIN",
+                "Éxito en la creacion del documento del user"
+            )
+            docRef.collection(RemoteDBCollections.PRIVATE.value).document(name).set(
+                hashMapOf(
+                    RemoteDBFields.EMAIL.value to email,
+                    RemoteDBFields.ID.value to uid,
+                    RemoteDBFields.BIRTHDATE.value to birthDate
+                )
+            ).addOnSuccessListener { onSuccess() }.addOnFailureListener {
+                Log.e(
+                    Tags.REMOTE_DATABASE.toString(),
+                    "An error has occurred when creating the private user's document",
+                    it
+                )
+                onFailure(Tags.REMOTE_DATABASE)
+            }
+        }.addOnFailureListener {
+            Log.e(
+                Tags.REMOTE_DATABASE.toString(),
+                "An error has occurred when creating the user's document",
+                it
+            )
+            onFailure(Tags.REMOTE_DATABASE)
+        }
+    }
+
+    /**
      *  Retrieves at most [maxNResults] of events created so far. In each call, the range of events
      *  changes, for example, the first call could be the first 50 events and the next one from 51 to
      *  100
      *
+     *  @param previousList The list whose value will be updated
      *  @param onSuccess Actions to do when the query was ok
      *  @param onFailure Actions to do when an error arose
      * */
-    fun getEvents(onSuccess: (QuerySnapshot) -> Unit, onFailure: (Exception) -> Unit) {
+    fun getEvents(
+        previousList: MutableLiveData<MutableList<Event>>,
+        onSuccess: (MutableList<Event>, Event) -> Unit,
+        onFailure: (Exception) -> Unit,
+    ) {
         val db = Firebase.firestore
         val query = db.collection(RemoteDBCollections.EVENTS.value)
             .orderBy(RemoteDBFields.START_EVENT.value)
             .startAfter(lastEvent?.startEvent).limit(maxNResults)
-        addGetListenersBehaviours(query, onSuccess, onFailure)
+
+        addGetListenersBehaviours(query, {
+            val list: MutableList<Event> = previousList.value ?: mutableListOf()
+            for (document in it.documents) {
+                // For each document, convert it to an Event and request its challenges and execute onSuccess
+                try {
+                    document.toObject<Event>()?.let { event ->
+                        event.id = document.id
+                        list.add(event)
+                        getChallenges(event, onFailure)
+                        onSuccess(list, event)
+                    }
+                } catch (re: RuntimeException) {
+                    Log.e(
+                        Tags.REMOTE_DATABASE.toString(),
+                        "An object of type Event is not well constructed in the database"
+                    )
+                }
+            }
+            previousList.value = list
+
+            // Update the reference to the last Event downloaded
+            lastEvent = list.last()
+        }, onFailure)
+    }
+
+    /**
+     * It requests all challenges belonging to the specified [Event]
+     *
+     * @param event The event to which the requested challenges will be stored
+     * @param onFailure Actions to execute in case there is an error when creating the [Challenge] object
+     * */
+    private fun getChallenges(
+        event: Event,
+        onFailure: (Exception) -> Unit,
+    ) {
+        val db = Firebase.firestore
+        val query = db.collection(RemoteDBCollections.EVENTS.value).document(event.id)
+            .collection(RemoteDBCollections.CHALLENGES.value)
+        addGetListenersBehaviours(query, {
+            for (document in it.documents) {
+                try {
+                    document.toObject<Challenge>()?.let { challenge ->
+                        event.challenges.add(challenge)
+                    }
+                } catch (re: RuntimeException) {
+                    Log.e(
+                        Tags.REMOTE_DATABASE.toString(),
+                        "An object of type Challenge is not well constructed in the database"
+                    )
+                }
+            }
+        },
+            { onFailure(it) })
+    }
+
+    /**
+     * Actions to execute when a query of type 'Get' has been executed
+     *
+     *  @param query The query to the remote database itself
+     *  @param onSuccess Actions to do when the query was ok
+     *  @param onFailure Actions to do when an error arose
+     * */
+    private fun addGetListenersBehaviours(
+        query: Query,
+        onSuccess: (QuerySnapshot) -> Unit,
+        onFailure: (Exception) -> Unit,
+    ) {
+        query.get().addOnSuccessListener {
+            if (it.size() > 0) {
+                onSuccess(it)
+            }
+        }
+            .addOnFailureListener {
+                onFailure(it)
+            }
     }
 
     /**
@@ -121,8 +331,8 @@ object RemoteDatabase {
         val challenges: List<Challenge> = event.challenges.toList()
         val doc = db.collection(RemoteDBCollections.EVENTS.value).document()
 
-        storeImages(
-            doc,
+        RemoteStorage.storeImages(
+            doc.id,
             event.eventImgURIs,
             {// When all the images where uploaded correctly
                 addSetListenersBehaviours(
@@ -147,29 +357,6 @@ object RemoteDatabase {
     }
 
     /**
-     * Actions to execute when a query of type 'Get' has been executed
-     *
-     * @param query The query to the remote database itself
-     *  @param onSuccess Actions to do when the query was ok
-     *  @param onFailure Actions to do when an error arose
-     * */
-    private fun addGetListenersBehaviours(
-        query: Query,
-        onSuccess: (QuerySnapshot) -> Unit,
-        onFailure: (Exception) -> Unit,
-    ) {
-        query.get().addOnSuccessListener {
-            if (it.size() > 0) {
-                it.documents.last().toObject<Event>()?.let { it1 -> lastEvent = it1 }
-                onSuccess(it)
-            }
-        }
-            .addOnFailureListener {
-                onFailure(it)
-            }
-    }
-
-    /**
      * Actions to execute when a query of type 'Set' has been executed
      *
      * @param query The query to the remote database itself
@@ -187,74 +374,5 @@ object RemoteDatabase {
             .addOnFailureListener {
                 onFailure(it)
             }
-    }
-
-    /**
-     * Upload the images of the [Event] and update its URIs with the URLs of the remote database
-     * instead of the ones from the local device
-     *
-     * @param doc The document where to store the references to images in Firebase Storage
-     * @param uris The URIs of the images pointing to the local memory. Later will be the URLs from
-     *             the remote database
-     * @param onSuccess Actions to do when everything was OK
-     * @param onFailure Actions to do when an [Exception] arose
-     * */
-    private suspend fun storeImages(
-        doc: DocumentReference,
-        uris: MutableList<String>,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit,
-    ) {
-        coroutineScope {
-            val storage = Firebase.storage.reference
-            val processes: MutableList<Deferred<String>> = mutableListOf()
-            var urls: List<String> = mutableListOf()
-            for ((counter, uri) in uris.withIndex()) {
-                // Upload each image concurrently
-                processes.add(async {
-                    val url =
-                        "${RemoteDBCollections.EVENTS.value}/${doc.id}/image${counter}.jpg"
-                    storage.child(url).putFile(Uri.parse(uri)).await()
-                    url
-                })
-            }
-            try {
-                urls = processes.awaitAll()
-                uris.clear()
-                uris.addAll(urls)
-                onSuccess()
-            } catch (e: Exception) {
-                storage.activeUploadTasks.forEach { it.cancel() }
-                urls.forEach { url -> storage.child(url).delete() }
-                onFailure(e)
-            }
-        }
-    }
-
-    /**
-     * It send a request to download each image of the event in different coroutines.
-     * This function is not managed with callbacks because the lists containing the events need to
-     * be updated after this process and with callbacks is not possible.
-     *
-     * @param path The path to the folder containing all the images of the [Event]
-     * @param eventList The list of the event to fill with its drawables
-     * */
-    suspend fun downloadImages(path: String, eventList: MutableList<Drawable>) {
-        coroutineScope {
-            val storage = Firebase.storage.reference
-            val list = storage.child(path).listAll().await()
-            val jobs: MutableList<Job> = mutableListOf()
-            for (item in list.items) {
-                jobs.add(launch {
-                    val file = File.createTempFile(
-                        "image",
-                        "jpg"
-                    )
-                    storage.child(item.path).getFile(file).await()
-                    Drawable.createFromPath(file.path)?.let { it1 -> eventList.add(it1) }
-                })
-            }
-            jobs.joinAll()
-        }
     }
 }
