@@ -10,13 +10,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/fragment_events_explorer">
+    app:startDestination="@id/fragment_map">
 
     <fragment
         android:id="@+id/fragment_map"
         android:name="my.city.ui.map.MapFragment"
         android:label="@string/nav_map"
         tools:layout="@layout/fragment_map">
+
+        <action
+            android:id="@+id/to_fragment_logIn"
+            app:destination="@id/logIn_navigation" />
+
         <action
             android:id="@+id/to_fragment_profile"
             app:destination="@id/fragment_profile" />
@@ -142,6 +147,31 @@
                 android:id="@+id/to_fragment_event_form"
                 app:destination="@id/fragment_event_form">
             </action>
+        </fragment>
+    </navigation>
+
+    <navigation
+        android:id="@+id/logIn_navigation"
+        app:startDestination="@id/fragment_log_in">
+        <fragment
+            android:id="@+id/fragment_log_in"
+            android:name="my.city.ui.LogInFragment"
+            tools:layout="@layout/fragment_log_in">
+            <action
+                android:id="@+id/to_fragment_map"
+                app:destination="@id/fragment_map" />
+            <action
+                android:id="@+id/to_fragment_sign_in"
+                app:destination="@id/fragment_sign_in" />
+        </fragment>
+        <fragment
+            android:id="@+id/fragment_sign_in"
+            android:name="my.city.ui.SignInFragment"
+            android:label="@string/nav_challenge_creation"
+            tools:layout="@layout/fragment_sign_in">
+            <action
+                android:id="@+id/to_fragment_map"
+                app:destination="@id/fragment_map" />
         </fragment>
     </navigation>
 </navigation>
