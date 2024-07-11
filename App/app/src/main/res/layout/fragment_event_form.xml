@@ -50,7 +50,7 @@
                 android:labelFor="@+id/txteEventName"
                 android:layout_marginVertical="10dp"
                 app:errorEnabled="true"
-                app:counterMaxLength="@integer/name_legth"
+                app:counterMaxLength="@integer/event_max_legth"
                 app:counterEnabled="true"
                 app:endIconMode="clear_text"
                 app:helperText="@string/textRequired">
@@ -59,11 +59,36 @@
                     android:id="@+id/txteEventName"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:maxLength="@integer/name_legth"
+                    android:maxLength="@integer/event_max_legth"
                     android:hint="@string/event_form_txteEventName"
                     android:inputType="text|textPersonName"
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtEventOrganizers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:labelFor="@+id/txteEventOrganizers"
+                android:layout_marginVertical="10dp"
+                app:prefixText="\@"
+                app:errorEnabled="true"
+                app:helperText="@string/textRequired">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/txteEventOrganizers"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/edit_text_view_height"
+                    android:hint="@string/event_form_txteEventOrganizers"
+                    android:imeOptions="actionDone"
+                    android:inputType="text|textPersonName|textNoSuggestions"
+                    android:paddingHorizontal="@dimen/edit_text_view_padding" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/txtEventDescription"
@@ -90,6 +115,7 @@
                 android:layout_marginVertical="10dp"
                 android:labelFor="@+id/txteEventLocation"
                 app:errorEnabled="true"
+                app:endIconMode="clear_text"
                 app:helperText="@string/textRequired">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -157,6 +183,26 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtEventNGuests"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="10dp"
+                android:labelFor="@+id/txteEventNGuests"
+                app:endIconMode="clear_text"
+                app:errorEnabled="true"
+                app:helperText="@string/textRequired">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txteEventNGuests"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:minWidth="@dimen/text_min_width"
+                    android:hint="@string/event_form_txteEventNGuests"
+                    android:text="@string/ten_value"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -182,7 +228,7 @@
                 android:id="@+id/layout_rvChallenges"
                 layout="@layout/rv_event_challenges"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="200dp"
                 android:layout_marginBottom="10dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
