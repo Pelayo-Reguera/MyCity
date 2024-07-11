@@ -109,7 +109,6 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
-    <string name="action_settings" translatable="false">Settings</string>
     <string name="fabEventInfo">Botón para registrarse en el evento</string>
     <string name="tabiInfo">INFO</string>
     <string name="tabiChallenge">RETOS</string>
@@ -168,4 +167,7 @@
     <string name="logIn_error">Usuario o contraseña incorrectos</string>
     <string name="logIn_profileDoc_error">Información corrupta en el servidor</string>
     <string name="logIn_profilePhoto_error">La foto de perfil no se ha podido cargar</string>
+    <string name="menu_item_settings">Ajustes</string>
+    <string name="user_form_txtConfPassword">Confirmar contraseña*</string>
+    <string name="user_form_txtLocation">Ciudad*</string>
 </resources>
