@@ -9,12 +9,16 @@
 package my.city.ui.profile
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import androidx.lifecycle.Lifecycle
 import my.city.R
 import my.city.databinding.FragmentProfileBinding
 import my.city.logic.viewmodels.UserVM
@@ -39,10 +43,49 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         // Use the static method from the class binding .bind(<<view>>) when the view is already
         // inflated and we want again an instance of the class binding
         binding = FragmentProfileBinding.bind(view)
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (!userVm.user.isAnonymous) {
-                binding.txtUsername.text = userVm.user.userName
+        userVm.userName.observe(viewLifecycleOwner) {
+            if (!userVm.isAnonymous.value!!) {
+                binding.txtUsername.text = userVm.userName.value
             }
+        }
+
+        userVm.profilePhoto.observe(viewLifecycleOwner) {
+            if (!userVm.isAnonymous.value!!) {
+                userVm.profilePhoto.value?.let {
+                    binding.imgProfile.setImageDrawable(it)
+                }
+            }
+        }
+        configureMenu()
+    }
+
+    private fun configureMenu() {
+        activity?.let {
+            val menuHost: MenuHost = it
+            menuHost.addMenuProvider(object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    // Infla el menú específico para este fragmento
+                    menuInflater.inflate(R.menu.profile_menu, menu)
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    // Maneja las acciones del menú aquí
+                    return when (menuItem.itemId) {
+                        R.id.item_signOut -> {
+                            userVm.signOut()
+                            true
+                        }
+
+                        R.id.item_settings -> {
+                            //TODO: Do something
+                            Toast.makeText(context, "Settings", Toast.LENGTH_LONG).show()
+                            true
+                        }
+
+                        else -> false
+                    }
+                }
+            }, viewLifecycleOwner, Lifecycle.State.RESUMED)
         }
     }
 }
