@@ -8,15 +8,11 @@
 
 package my.city.ui
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.net.NetworkRequest.Builder
+import android.net.NetworkRequest
 import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -34,7 +30,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import my.city.R
 import my.city.databinding.ActivityMainBinding
-import my.city.logic.viewmodels.EventsListVM
 import my.city.logic.viewmodels.UserVM
 
 /**
@@ -42,7 +37,8 @@ import my.city.logic.viewmodels.UserVM
  * the things this app allows like:
  * - Search events by name in the [ExplorerRecyclerFragment][my.city.ui.explorer.ExplorerEventsFragment]
  * - See upcoming events around the user in the [MapFragment][my.city.ui.map.MapFragment]
- * - See the user information like the number of MyPoints, followers, name...
+ * - See the user information like the number of MyPoints, followers, name, etc.
+ * In [ProfileFragment][my.city.ui.profile.ProfileFragment]
  *
  *  @author Pelayo Reguera García
  * */
@@ -54,7 +50,6 @@ class MainActivity : AppCompatActivity() {
     // Its initialization is delegated to viewModels() to determine its scope to the activity in this
     // case. It doesn't work if the default constructor of userVM or ViewModel() is used
     private val userVm: UserVM by viewModels()
-    private val eventsListVM: EventsListVM by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //INFO: Try to improve the splash screen using an animated icon
@@ -111,62 +106,21 @@ class MainActivity : AppCompatActivity() {
                 else -> navView.isVisible = true
             }
         }
+        internetConfig()
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CHANGE_NETWORK_STATE
-            ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.WRITE_SETTINGS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            internetConfig()
-        } else {
-            val locationPermissionRequest = registerForActivityResult(
-                ActivityResultContracts.RequestMultiplePermissions()
-            ) { permissions ->
-                var isGranted =
-                    permissions.getOrDefault(Manifest.permission.CHANGE_NETWORK_STATE, false)
-                isGranted = isGranted && permissions.getOrDefault(
-                    Manifest.permission.WRITE_SETTINGS,
-                    false
-                )
-
-                if (isGranted) {
-                    internetConfig()
-                }
-            }
-
-            locationPermissionRequest.launch(
-                arrayOf(
-                    Manifest.permission.CHANGE_NETWORK_STATE,
-                    Manifest.permission.WRITE_SETTINGS
-                )
-            )
-        }
-    }
-
+    /**
+     * Checks whether the device is connected to internet or not through Wi-Fi connection or the
+     * mobile network
+     * */
     private fun internetConfig() {
-        val connectivityManager = ContextCompat.getSystemService(
-            this,
-            ConnectivityManager::class.java
-        ) as ConnectivityManager
-
-        val networkRequest = Builder()
+        val networkRequest = NetworkRequest.Builder()
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
             .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
             .build()
 
         val networkCallback = object : ConnectivityManager.NetworkCallback() {
-            // network is available for use
-            override fun onAvailable(network: Network) {
-                super.onAvailable(network)
-                userVm.isConnected = true
-            }
 
             // Network capabilities have changed for the network
             override fun onCapabilitiesChanged(
@@ -174,28 +128,26 @@ class MainActivity : AppCompatActivity() {
                 networkCapabilities: NetworkCapabilities,
             ) {
                 super.onCapabilitiesChanged(network, networkCapabilities)
-                userVm.isConnected =
+                var newState =
                     networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                if (!userVm.isConnected) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        R.string.internet_connection_error,
-                        Toast.LENGTH_LONG
-                    ).show()
+                newState = newState &&
+                        networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+
+                if (newState != userVm.isConnected) {
+                    userVm.isConnected = newState
                 }
             }
 
-            // lost network connection
+            // lost the current default network connection
             override fun onLost(network: Network) {
                 super.onLost(network)
                 userVm.isConnected = false
-                Toast.makeText(
-                    this@MainActivity,
-                    R.string.internet_connection_error,
-                    Toast.LENGTH_LONG
-                ).show()
             }
         }
+        val connectivityManager = ContextCompat.getSystemService(
+            this,
+            ConnectivityManager::class.java
+        ) as ConnectivityManager
 
         connectivityManager.requestNetwork(networkRequest, networkCallback)
     }
