@@ -10,10 +10,8 @@ package my.city.database
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.GeoPoint
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
@@ -35,7 +33,7 @@ object RemoteDatabase {
     /** This property is used for pagination purposes*/
     private var lastEvent: Event? = null
 
-    /** This property is used for limit the number of results*/
+    /** This property is used for limit the number of results of events*/
     private var maxNResults: Long = 50
 
     suspend fun getUserCreatedEvents(): QuerySnapshot? {
@@ -90,18 +88,18 @@ object RemoteDatabase {
                         onSuccess(privateInfo)
                     } else {
                         Log.i(
-                            Tags.PROFILE_DOCUMENT.toString(),
+                            Tags.PROFILE_DOCUMENT_ERROR.toString(),
                             "The user's private document doesn't exists"
                         )
                         onFailure(Tags.PROFILE_DOCUMENT_ERROR)
                     }
                 }.addOnFailureListener {
                     Log.w(
-                        Tags.PROFILE_DOCUMENT.toString(),
+                        Tags.PROFILE_DOCUMENT_ERROR.toString(),
                         "The private information of the user couldn't be downloaded",
                         it
                     )
-                    onFailure(Tags.LOGIN_ERROR)
+                    onFailure(Tags.PROFILE_DOCUMENT_ERROR)
                 }
         }, onFailure)
     }
@@ -117,47 +115,63 @@ object RemoteDatabase {
         val db = Firebase.firestore
         //INFO: Try to use the name saved in its own document as a field instead of the document ID
         val doc = db.collection(RemoteDBCollections.USERS.value).document(userName)
-        Log.d(
-            "SIGNIN",
-            "Creando solicitud del documento del usuario $doc"
-        )
         doc.get().addOnSuccessListener { docResult ->
-            Log.i(
-                "SIGNIN",
-                "Documento de usuario solicitado con id ${docResult.id} y data ${docResult.data}"
-            )
             try {
                 val user: User? = docResult.toObject<User>()
                 if (user != null) {
-                    Log.i(
-                        "SIGNIN",
-                        "Usuario creado parcialmente $user"
-                    )
                     onSuccess(user)
                 } else {
                     Log.i(
-                        Tags.PROFILE_DOCUMENT.toString(),
+                        Tags.PROFILE_DOCUMENT_ERROR.toString(),
                         "The user's document doesn't exists"
                     )
                     onFailure(Tags.PROFILE_DOCUMENT_ERROR)
                 }
-                Log.d(
-                    "SIGNIN",
-                    "Proceso Usuario finalizado"
-                )
             } catch (re: RuntimeException) {
                 Log.e(
-                    Tags.REMOTE_DATABASE.toString(),
+                    Tags.PROFILE_DOCUMENT_ERROR.toString(),
                     "An object of type User is not well constructed in the database", re
                 )
                 onFailure(Tags.PROFILE_DOCUMENT_ERROR)
             }
         }.addOnFailureListener {
             Log.e(
-                "SIGNIN",
+                Tags.PROFILE_DOCUMENT_ERROR.toString(),
                 "Error when retrieving the user's document", it
             )
-            onFailure(Tags.LOGIN_ERROR)
+            onFailure(Tags.PROFILE_DOCUMENT_ERROR)
+        }
+    }
+
+    /**
+     * Finds users starting with the user name provided
+     *
+     * @param onSuccess Actions to do when a list of maximum 10 results is generated containing the
+     * public user name of each person associated with its document's ID (the original user name)
+     * @param onFailure Actions to do in case it was nos possible to complete the request
+     * */
+    fun findUser(
+        userName: String,
+        onSuccess: (Map<String, String>) -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        val db = Firebase.firestore
+        val nextLetter = userName.substring(0, userName.lastIndex) +
+                (userName.last() + 1)
+        val query = db.collection(RemoteDBCollections.USERS.value)
+            .whereGreaterThanOrEqualTo(RemoteDBFields.NAME.value, userName)
+            .whereLessThan(RemoteDBFields.NAME.value, nextLetter)
+            .limit(10)
+        query.get().addOnSuccessListener { result ->
+            onSuccess(result.documents.associate {
+                it.getString(RemoteDBFields.NAME.value).toString() to it.id
+            })
+        }.addOnFailureListener {
+            Log.e(
+                Tags.REMOTE_DATABASE_ERROR.toString(),
+                "Error finding the user in the database", it
+            )
+            onFailure(Tags.REMOTE_DATABASE_ERROR)
         }
     }
 
@@ -192,10 +206,6 @@ object RemoteDatabase {
                 RemoteDBFields.GENDER.value to gender
             )
         ).addOnSuccessListener {
-            Log.d(
-                "SIGNIN",
-                "Éxito en la creacion del documento del user"
-            )
             docRef.collection(RemoteDBCollections.PRIVATE.value).document(name).set(
                 hashMapOf(
                     RemoteDBFields.EMAIL.value to email,
@@ -204,19 +214,19 @@ object RemoteDatabase {
                 )
             ).addOnSuccessListener { onSuccess() }.addOnFailureListener {
                 Log.e(
-                    Tags.REMOTE_DATABASE.toString(),
+                    Tags.PROFILE_DOCUMENT_ERROR.toString(),
                     "An error has occurred when creating the private user's document",
                     it
                 )
-                onFailure(Tags.REMOTE_DATABASE)
+                onFailure(Tags.PROFILE_DOCUMENT_ERROR)
             }
         }.addOnFailureListener {
             Log.e(
-                Tags.REMOTE_DATABASE.toString(),
+                Tags.PROFILE_DOCUMENT_ERROR.toString(),
                 "An error has occurred when creating the user's document",
                 it
             )
-            onFailure(Tags.REMOTE_DATABASE)
+            onFailure(Tags.PROFILE_DOCUMENT_ERROR)
         }
     }
 
@@ -235,33 +245,31 @@ object RemoteDatabase {
         onFailure: (Exception) -> Unit,
     ) {
         val db = Firebase.firestore
-        val query = db.collection(RemoteDBCollections.EVENTS.value)
+        db.collection(RemoteDBCollections.EVENTS.value)
             .orderBy(RemoteDBFields.START_EVENT.value)
-            .startAfter(lastEvent?.startEvent).limit(maxNResults)
-
-        addGetListenersBehaviours(query, {
-            val list: MutableList<Event> = previousList.value ?: mutableListOf()
-            for (document in it.documents) {
-                // For each document, convert it to an Event and request its challenges and execute onSuccess
-                try {
-                    document.toObject<Event>()?.let { event ->
-                        event.id = document.id
-                        list.add(event)
-                        getChallenges(event, onFailure)
-                        onSuccess(list, event)
+            .startAfter(lastEvent?.startEvent).limit(maxNResults).get().addOnSuccessListener {
+                val list: MutableList<Event> = previousList.value ?: mutableListOf()
+                for (document in it.documents) {
+                    // For each document, convert it to an Event and request its challenges and execute onSuccess
+                    try {
+                        document.toObject<Event>()?.let { event ->
+                            event.id = document.id
+                            list.add(event)
+                            getChallenges(event, onFailure)
+                            onSuccess(list, event)
+                        }
+                    } catch (re: RuntimeException) {
+                        Log.e(
+                            Tags.REMOTE_DATABASE_ERROR.toString(),
+                            "An object of type Event is not well constructed in the database"
+                        )
                     }
-                } catch (re: RuntimeException) {
-                    Log.e(
-                        Tags.REMOTE_DATABASE.toString(),
-                        "An object of type Event is not well constructed in the database"
-                    )
                 }
-            }
-            previousList.value = list
+                previousList.value = list
 
-            // Update the reference to the last Event downloaded
-            lastEvent = list.last()
-        }, onFailure)
+                // Update the reference to the last Event downloaded
+                lastEvent = list.last()
+            }.addOnFailureListener(onFailure)
     }
 
     /**
@@ -275,45 +283,22 @@ object RemoteDatabase {
         onFailure: (Exception) -> Unit,
     ) {
         val db = Firebase.firestore
-        val query = db.collection(RemoteDBCollections.EVENTS.value).document(event.id)
-            .collection(RemoteDBCollections.CHALLENGES.value)
-        addGetListenersBehaviours(query, {
-            for (document in it.documents) {
-                try {
-                    document.toObject<Challenge>()?.let { challenge ->
-                        event.challenges.add(challenge)
+        db.collection(RemoteDBCollections.EVENTS.value).document(event.id)
+            .collection(RemoteDBCollections.CHALLENGES.value).get().addOnSuccessListener {
+                for (document in it.documents) {
+                    try {
+                        document.toObject<Challenge>()?.let { challenge ->
+                            event.challenges.add(challenge)
+                        }
+                    } catch (re: RuntimeException) {
+                        Log.e(
+                            Tags.CHALLENGE_DOCUMENT_ERROR.toString(),
+                            "A Challenge is not well constructed in the database",
+                            re
+                        )
                     }
-                } catch (re: RuntimeException) {
-                    Log.e(
-                        Tags.REMOTE_DATABASE.toString(),
-                        "An object of type Challenge is not well constructed in the database"
-                    )
                 }
-            }
-        },
-            { onFailure(it) })
-    }
-
-    /**
-     * Actions to execute when a query of type 'Get' has been executed
-     *
-     *  @param query The query to the remote database itself
-     *  @param onSuccess Actions to do when the query was ok
-     *  @param onFailure Actions to do when an error arose
-     * */
-    private fun addGetListenersBehaviours(
-        query: Query,
-        onSuccess: (QuerySnapshot) -> Unit,
-        onFailure: (Exception) -> Unit,
-    ) {
-        query.get().addOnSuccessListener {
-            if (it.size() > 0) {
-                onSuccess(it)
-            }
-        }
-            .addOnFailureListener {
-                onFailure(it)
-            }
+            }.addOnFailureListener { onFailure(it) }
     }
 
     /**
@@ -331,13 +316,12 @@ object RemoteDatabase {
         val challenges: List<Challenge> = event.challenges.toList()
         val doc = db.collection(RemoteDBCollections.EVENTS.value).document()
 
-        RemoteStorage.storeImages(
+        RemoteStorage.storeEventImages(
             doc.id,
             event.eventImgURIs,
             {// When all the images where uploaded correctly
-                addSetListenersBehaviours(
-                    doc.set(event),
-                    { // A subcollection named 'challenges' is created in the Event in case it has challenges
+                doc.set(event)
+                    .addOnSuccessListener { // A subcollection named 'challenges' is created in the Event in case it has challenges
                         db.runBatch { it1 ->
                             for (challenge in challenges) {
                                 it1.set(
@@ -348,31 +332,9 @@ object RemoteDatabase {
                             }
                         }.addOnSuccessListener { onSuccess() }
                             .addOnFailureListener { onFailure(it) }
-                    },
-                    onFailure,
-                )
+                    }.addOnFailureListener(onFailure)
             },
             onFailure
         )
-    }
-
-    /**
-     * Actions to execute when a query of type 'Set' has been executed
-     *
-     * @param query The query to the remote database itself
-     *  @param onSuccess Actions to do when the query was ok
-     *  @param onFailure Actions to do when an error arose
-     * */
-    private fun addSetListenersBehaviours(
-        query: Task<Void>,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit,
-    ) {
-        query.addOnSuccessListener {
-            onSuccess()
-        }
-            .addOnFailureListener {
-                onFailure(it)
-            }
     }
 }
