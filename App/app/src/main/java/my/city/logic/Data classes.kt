@@ -104,7 +104,7 @@ data class Event(
         street: String,
         startEvent: LocalDateTime,
         endEvent: LocalDateTime,
-        guestsUserNames: MutableList<String>,
+        guestsUserNames: MutableList<String> = mutableListOf(),
         guestsCapacity: Int = 10,
         guestsNJoined: Int = 0,
         id: String = "", //It's the last one to avoid change all the calls to this constructor
@@ -154,6 +154,7 @@ data class Event(
      *
      * @return [LocalDateTime] object
      * */
+    @Exclude
     fun getStartLocalDateTime(): LocalDateTime {
         return startEvent.toDate().toInstant().atZone(ZoneId.systemDefault())
             .toLocalDateTime()
@@ -164,6 +165,7 @@ data class Event(
      *
      * @return [LocalDateTime] object
      * */
+    @Exclude
     fun getEndLocalDateTime(): LocalDateTime {
         return endEvent.toDate().toInstant().atZone(ZoneId.systemDefault())
             .toLocalDateTime()

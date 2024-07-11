@@ -144,7 +144,7 @@
                 android:id="@+id/txteConfirmationPassword"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/user_form_txtPassword"
+                android:hint="@string/user_form_txtConfPassword"
                 android:inputType="text|textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -163,7 +163,7 @@
                 android:id="@+id/txteLocation"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/event_form_txteEventLocation"
+                android:hint="@string/user_form_txtLocation"
                 android:inputType="text|textPostalAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -219,9 +219,10 @@
                     android:id="@+id/txteGender"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="@string/user_form_txtGender"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
+                    android:hint="@string/user_form_txtGender"
+                    android:inputType="text|textCapWords"
                     app:simpleItems="@array/gender_values" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
