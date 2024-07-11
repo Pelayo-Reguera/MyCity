@@ -22,24 +22,26 @@ enum class RemoteDBFields(val value: String) {
 
 enum class Tags {
     /** An error generated from the remote database. It's critical, the app shouldn't continue*/
-    REMOTE_DATABASE,
+    REMOTE_DATABASE_ERROR,
 
     /** An error generated when either uploading the photo or downloading it. It's not critical, the app
      * should continue*/
-    PROFILE_PHOTO_ERROR,
-    PROFILE_DOCUMENT,
+    PROFILE_PHOTO_FAILURE,
 
+    // Document errors
     /** An error generated when either uploading the user information or downloading it. The app shouldn't
      * advance and request the user to try again*/
     PROFILE_DOCUMENT_ERROR,
+    EVENT_DOCUMENT_ERROR,
+    CHALLENGE_DOCUMENT_ERROR,
 
     /** When a severe error at the moment of creating an account occurs where the app shouldn't continue*/
     SIGNING_ERROR,
-    EXISTING_EMAIL,
+    EXISTING_EMAIL_FAILURE,
 
     /** When a severe error occurs where the app should not continue*/
     LOGIN_ERROR,
-    LOGIN_FAIL
+    LOGIN_FAILURE
 }
 
 

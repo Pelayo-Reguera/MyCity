@@ -127,7 +127,7 @@ class LogInFragment : Fragment(R.layout.fragment_log_in) {
                     },
                     {
                         when (it) {
-                            Tags.LOGIN_FAIL -> {
+                            Tags.LOGIN_FAILURE -> {
                                 signInState = State.FAILURE
                                 Toast.makeText(
                                     context,
@@ -145,7 +145,7 @@ class LogInFragment : Fragment(R.layout.fragment_log_in) {
                                 ).show()
                             }
 
-                            Tags.PROFILE_PHOTO_ERROR -> {
+                            Tags.PROFILE_PHOTO_FAILURE -> {
                                 // It's not a several problem so the app continues and shows a message
                                 Toast.makeText(
                                     context,

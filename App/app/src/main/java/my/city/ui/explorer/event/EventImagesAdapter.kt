@@ -48,9 +48,7 @@ class EventImagesAdapter(
                 imgChallenge.isClickable = true
                 imgChallenge.setOnClickListener {
                     addImage.launch(
-                        PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageOnly
-                        )
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                     )
                 }
             } else {

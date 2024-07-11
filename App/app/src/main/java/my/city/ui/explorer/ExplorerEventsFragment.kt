@@ -53,53 +53,54 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
             rvEvents.adapter = ExplorerAdapter(it)
         }
 
-        // Observer executed when an Event is created
+        // Observer executed when an Event is created to show dialog
         eventsListVM.message.observe(viewLifecycleOwner) {
             context?.let {
-                val builder = Dialog(it)
-                val inflater = requireActivity().layoutInflater
+                if (eventsListVM.processState != State.FINISHED) {
+                    val builder = Dialog(it)
+                    val inflater = requireActivity().layoutInflater
 
-                val binding = inflater.inflate(R.layout.cv_dialog_animation, null)
-                val animationView = binding.findViewById<LottieAnimationView>(R.id.animIcon)
+                    val binding = inflater.inflate(R.layout.cv_dialog_animation, null)
+                    val animationView = binding.findViewById<LottieAnimationView>(R.id.animIcon)
 
-                animationView.setAnimation(R.raw.orange_city)
-                animationView.addAnimatorListener(object : Animator.AnimatorListener {
-                    var isFinished = false //It is used to determined when the animation was changed
-                    override fun onAnimationStart(animation: Animator) {}
-                    override fun onAnimationEnd(animation: Animator) {
-                        if (isFinished) {
-                            builder.dismiss()
-                        }
-                    }
-
-                    override fun onAnimationCancel(animation: Animator) {}
-                    override fun onAnimationRepeat(animation: Animator) {
-                        when (eventsListVM.processState) {
-                            State.SUCCESS -> {
-                                // When doing this attachment, onAnimationEnd is executed, that's why
-                                // isFinished variable is needed
-                                animationView.setAnimation(R.raw.orange_tick)
-                                animationView.playAnimation()
-                                animationView.repeatCount = 0
-                                isFinished = true
-                            }
-
-                            State.IN_PROCESS -> {}
-                            State.FAILURE -> {
-                                animationView.setAnimation(R.raw.orange_cross)
-                                animationView.playAnimation()
-                                animationView.repeatCount = 0
-                                isFinished = true
+                    animationView.setAnimation(R.raw.orange_city)
+                    animationView.addAnimatorListener(object : Animator.AnimatorListener {
+                        override fun onAnimationStart(animation: Animator) {}
+                        override fun onAnimationEnd(animation: Animator) {
+                            if (eventsListVM.processState == State.FINISHED) {
+                                builder.dismiss()
                             }
                         }
-                    }
-                })
 
-                builder.setContentView(binding)
-                builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                builder.setCancelable(false)
-                builder.create()
-                builder.show()
+                        override fun onAnimationCancel(animation: Animator) {}
+                        override fun onAnimationRepeat(animation: Animator) {
+                            when (eventsListVM.processState) {
+                                State.SUCCESS -> {
+                                    // When doing this attachment, onAnimationEnd is executed, that's why
+                                    // isFinished variable is needed
+                                    animationView.setAnimation(R.raw.orange_tick)
+                                    animationView.playAnimation()
+                                    animationView.repeatCount = 0
+                                    eventsListVM.processState = State.FINISHED
+                                }
+
+                                State.IN_PROCESS, State.FINISHED -> {}
+                                State.FAILURE -> {
+                                    animationView.setAnimation(R.raw.orange_cross)
+                                    animationView.playAnimation()
+                                    animationView.repeatCount = 0
+                                    eventsListVM.processState = State.FINISHED
+                                }
+                            }
+                        }
+                    })
+
+                    builder.setContentView(binding)
+                    builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    builder.setCancelable(false)
+                    builder.create()
+                    builder.show()
+                }
             }
         }
 

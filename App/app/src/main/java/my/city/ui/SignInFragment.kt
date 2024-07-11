@@ -109,6 +109,8 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
             "De8ig7uYydhNPpGTnNS0PMqAQxagES3R" //TODO: Remove
         )
     }
+
+    /** This property is used for performance purposes with the TomTom's API*/
     private var isSearching: Boolean = false
 
     /** Informs whether there is a new input to consume in a search*/
@@ -165,11 +167,10 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                 }
             }
         }
+
         binding.txteLocation.setOnClickListener { binding.txtLocation.isErrorEnabled = false }
         binding.txteLocation.setOnFocusChangeListener { _, hasFocus ->
-            binding.nestedScroll.scrollTo(0, binding.searchResultsView.bottom)
             binding.searchResultsView.isVisible = hasFocus
-
         }
 
         // When an option is clicked its text is written in the EditText
@@ -346,7 +347,7 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                     },
                     {
                         when (it) {
-                            Tags.EXISTING_EMAIL -> {
+                            Tags.EXISTING_EMAIL_FAILURE -> {
                                 signInState = State.FAILURE
                                 Toast.makeText(
                                     context,
@@ -355,7 +356,7 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                                 ).show()
                             }
 
-                            Tags.PROFILE_PHOTO_ERROR -> {
+                            Tags.PROFILE_PHOTO_FAILURE -> {
                                 // The app continue despite this problem so a state is not set because
                                 // it depends on other factors
                                 Toast.makeText(

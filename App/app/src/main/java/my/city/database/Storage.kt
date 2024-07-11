@@ -39,7 +39,7 @@ object RemoteStorage {
      * */
     fun downloadProfilePhoto(
         userName: String,
-        onSuccess: (String, File) -> Unit,
+        onSuccess: (File) -> Unit,
         onFailure: (Tags) -> Unit,
     ) {
         val storage = Firebase.storage.reference
@@ -48,14 +48,14 @@ object RemoteStorage {
             "jpg"
         )
         val url = "${RemoteDBCollections.USERS.value}/${userName}/profile.jpg"
-        storage.child(url).getFile(file).addOnSuccessListener { onSuccess(url, file) }
+        storage.child(url).getFile(file).addOnSuccessListener { onSuccess(file) }
             .addOnFailureListener {
                 Log.w(
-                    Tags.PROFILE_PHOTO_ERROR.toString(),
+                    Tags.PROFILE_PHOTO_FAILURE.toString(),
                     "There was an error downloading the photo",
                     it
                 )
-                onFailure(Tags.PROFILE_PHOTO_ERROR)
+                onFailure(Tags.PROFILE_PHOTO_FAILURE)
             }
     }
 
@@ -103,11 +103,11 @@ object RemoteStorage {
             .addOnSuccessListener { onSuccess(url) }
             .addOnFailureListener { e ->
                 Log.w(
-                    Tags.PROFILE_PHOTO_ERROR.toString(),
+                    Tags.PROFILE_PHOTO_FAILURE.toString(),
                     "There was a problem uploading the profile photo",
                     e
                 )
-                onFailure(Tags.PROFILE_PHOTO_ERROR)
+                onFailure(Tags.PROFILE_PHOTO_FAILURE)
             }
     }
 
@@ -121,7 +121,7 @@ object RemoteStorage {
      * @param onSuccess Actions to do when everything was OK
      * @param onFailure Actions to do when an [Exception] arose
      * */
-    suspend fun storeImages(
+    suspend fun storeEventImages(
         id: String,
         uris: MutableList<String>,
         onSuccess: () -> Unit,

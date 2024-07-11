@@ -23,7 +23,6 @@ import my.city.database.RemoteDatabase
 import my.city.database.RemoteStorage
 import my.city.database.Tags
 import my.city.logic.Event
-import java.io.File
 
 /**
  * It represents all the information of the user currently using the app. Its purpose is to keep the
@@ -34,7 +33,7 @@ class UserVM : ViewModel() {
 
     var userName: MutableLiveData<String> = MutableLiveData("")
     var email: String = ""
-    var profilePhoto: MutableLiveData<Pair<String, Drawable>> = MutableLiveData()
+    var profilePhoto: MutableLiveData<Drawable> = MutableLiveData()
     var location: GeoPoint = GeoPoint(39.56885126840019, -3.301451387486932) //Spain
 
     /** A list of friends containing only their user names and profile photos */
@@ -110,25 +109,34 @@ class UserVM : ViewModel() {
                                 onSuccess,
                                 onFailure
                             )
-                        }?.addOnFailureListener {
+                        }?.addOnFailureListener { e ->
+                            Log.e(
+                                Tags.SIGNING_ERROR.toString(),
+                                "There was a problem with the access token",
+                                e
+                            )
                             // If sign in fails, display a message to the user.
                             onFailure(Tags.SIGNING_ERROR)
                         }
-                    }.addOnFailureListener {
+                    }.addOnFailureListener { e ->
+                        Log.w(
+                            Tags.REMOTE_DATABASE_ERROR.toString(),
+                            "There was an error when updating the user profile information",
+                            e
+                        )
                         // If sign in fails, display a message to the user.
-                        onFailure(Tags.SIGNING_ERROR)
+                        onFailure(Tags.REMOTE_DATABASE_ERROR)
                     }
                 }
             }.addOnFailureListener {
                 // If sign in fails, display a message to the user.
-                Log.w(
-                    Tags.EXISTING_EMAIL.toString(),
+                Log.i(
+                    Tags.EXISTING_EMAIL_FAILURE.toString(),
                     "The email is already registered for another user",
                     it
                 )
-                onFailure(Tags.EXISTING_EMAIL)
+                onFailure(Tags.EXISTING_EMAIL_FAILURE)
             }
-        Log.d("SIGNIN", "Iniciando sesión")
     }
 
     /**
@@ -156,8 +164,18 @@ class UserVM : ViewModel() {
             Firebase.auth.getAccessToken(true)
                 .addOnSuccessListener {
                     currentUser.value?.let { user -> getUserData(user, onSuccess, onFailure) }
-                }.addOnFailureListener { onFailure(Tags.LOGIN_ERROR) }
-        }.addOnFailureListener { onFailure(Tags.LOGIN_FAIL) }
+                }.addOnFailureListener { e ->
+                    Log.e(
+                        Tags.LOGIN_ERROR.toString(),
+                        "There was a problem with the access token",
+                        e
+                    )
+                    onFailure(Tags.LOGIN_ERROR)
+                }
+        }.addOnFailureListener {
+            Log.d(Tags.LOGIN_FAILURE.toString(), "The credentials are incorrect")
+            onFailure(Tags.LOGIN_FAILURE)
+        }
     }
 
     /**
@@ -177,10 +195,6 @@ class UserVM : ViewModel() {
     ) {
         RemoteDatabase.getPublicAndPrivateUserInfo(
             userData.displayName.toString(), { user ->
-                Log.d(
-                    "SIGNIN",
-                    "Documento de usuario obtenido $user"
-                )
                 userName.value = user.name
                 email = user.email
                 location = GeoPoint(user.location.latitude, user.location.longitude)
@@ -190,17 +204,9 @@ class UserVM : ViewModel() {
                 onSuccess()
                 RemoteStorage.downloadProfilePhoto(
                     user.name,
-                    { url: String, file: File ->
-                        Log.d(
-                            "SIGNIN",
-                            "File descargado $file"
-                        )
+                    { file ->
                         Drawable.createFromPath(file.path)?.let { drawable ->
-                            profilePhoto.value = Pair(url, drawable)
-                            Log.d(
-                                "SIGNIN",
-                                "Drawable guardado ${Pair(url, drawable)}"
-                            )
+                            profilePhoto.value = drawable
                         }
                     },
                     onFailure
@@ -233,7 +239,6 @@ class UserVM : ViewModel() {
         onSuccess: () -> Unit,
         onFailure: (Tags) -> Unit,
     ) {
-        Log.d("SIGNIN", "Documento de usuario creandose")
         RemoteDatabase.createUserInfo(
             userData.displayName.toString(),
             userData.email.toString(),
@@ -242,46 +247,25 @@ class UserVM : ViewModel() {
             birthDate,
             gender,
             {
-                Log.d(
-                    "SIGNIN",
-                    "Comienzo del proceso de photoUrl"
-                )
                 userName.value = userData.displayName.toString()
                 email = userData.email.toString()
                 this.location = location
                 onSuccess()
                 imgProfile?.let { photo ->
-                    Log.d(
-                        "SIGNIN",
-                        "Descargando drawable de URL"
-                    )
-
                     RemoteStorage.storeProfilePhoto(
                         photo,
                         userData.displayName.toString(),
                         { url ->
-                            Log.d(
-                                "SIGNIN",
-                                "Transformando drawable a file"
-                            )
                             Drawable.createFromPath(photo.path)?.let { drawable ->
                                 currentUser.value?.updateProfile(userProfileChangeRequest {
                                     photoUri = Uri.parse(url)
                                 })
-                                profilePhoto.value = Pair(url, drawable)
-                                Log.d(
-                                    "DRAWABLE",
-                                    "Drawable creado y guardado ${Pair(url, drawable)}"
-                                )
+                                profilePhoto.value = drawable
                             }
                         },
                         onFailure
                     )
                 }
-                Log.d(
-                    "SIGNIN",
-                    "Fin del proceso de photoUrl"
-                )
             }, onFailure
         )
     }
@@ -290,9 +274,9 @@ class UserVM : ViewModel() {
     /**
      * Sing out the user's account
      */
-    fun singOut() {
-        //INFO: Improve it by passing it to the anonymous account
+    fun signOut() {
         Firebase.auth.signOut()
+        currentUser.value = Firebase.auth.currentUser
     }
 
     /**

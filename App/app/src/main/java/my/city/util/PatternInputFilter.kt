@@ -31,7 +31,7 @@ class PatternInputFilter(private val pattern: FilterPattern) : InputFilter {
 
 
         // Check if the input matches the pattern
-        return if (/*source.subSequence(start, end)*/resultingText.matches(pattern)) {
+        return if (resultingText.matches(pattern)) {
             null // Accept the input if it matches
         } else {
             "" // Reject the input if it does not match
