@@ -38,8 +38,8 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
 
     private lateinit var binding: FragmentEventsExplorerBinding
     private lateinit var rvEvents: RecyclerView
-    private val userVM: UserVM by activityViewModels()
     private val eventsListVM: EventsListVM by activityViewModels()
+    private val userVM: UserVM by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -50,7 +50,7 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
         rvEvents.setHasFixedSize(true)
 
         eventsListVM.events.observe(viewLifecycleOwner) {
-            rvEvents.adapter = ExplorerAdapter(it)
+            rvEvents.adapter = ExplorerAdapter(it, userVM.userName.value.toString())
         }
 
         // Observer executed when an Event is created to show dialog

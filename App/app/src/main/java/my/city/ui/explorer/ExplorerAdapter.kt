@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.imageview.ShapeableImageView
 import my.city.R
+import my.city.database.RemoteDatabase
 import my.city.logic.Event
 import java.time.format.DateTimeFormatter
 
@@ -24,7 +25,7 @@ import java.time.format.DateTimeFormatter
  * This class is in charge of generating components based on a layout which later will be
  * used in a recycler view
  * */
-class ExplorerAdapter(private val eventsList: List<Event>) :
+class ExplorerAdapter(private val eventsList: List<Event>, private val userName: String) :
     RecyclerView.Adapter<ExplorerAdapter.EventViewHolder>() {
 
     /**
@@ -37,9 +38,9 @@ class ExplorerAdapter(private val eventsList: List<Event>) :
         private val txtTitle: TextView = view.findViewById(R.id.txtTitle)
         private val txtSubTitle: TextView = view.findViewById(R.id.txtSubTitle)
         private val txtDescription: TextView = view.findViewById(R.id.txtDescription)
-        private val btnAttendance: MaterialButton = view.findViewById(R.id.btnAttendance) //TODO
+        private val btnAttendance: MaterialButton = view.findViewById(R.id.btnAttendance)
 
-        fun bindEvent(event: Event) {
+        fun bindEvent(event: Event, userName: String) {
             if (event.eventDrawables.size > 0) {
                 imgEvent.setImageDrawable(event.eventDrawables[0])
             }
@@ -48,6 +49,25 @@ class ExplorerAdapter(private val eventsList: List<Event>) :
                 event.getStartLocalDateTime()
                     .format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
             txtDescription.text = event.street
+
+            btnAttendance.setOnClickListener {
+                if (event.isUserJoined) {
+                    RemoteDatabase.disjoinEvent(event.id, userName, {
+                        event.isUserJoined = !event.isUserJoined
+                        btnAttendance.text =
+                            btnAttendance.context.getString(R.string.btnAttendance)
+                        btnAttendance.setBackgroundColor(btnAttendance.context.getColor(R.color.orange1))
+                    }, {})
+                } else {
+                    RemoteDatabase.joinEvent(event.id, userName, {
+                        event.isUserJoined = !event.isUserJoined
+                        btnAttendance.text =
+                            btnAttendance.context.getString(R.string.btnAttendance_pressed)
+                        btnAttendance.setBackgroundColor(btnAttendance.context.getColor(R.color.transparent_brown))
+                    }, {})
+                }
+            }
+
             // Behaviour of the card
             view.setOnClickListener { card ->
                 card.findNavController()
@@ -70,7 +90,7 @@ class ExplorerAdapter(private val eventsList: List<Event>) :
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.bindEvent(eventsList[position])
+        viewHolder.bindEvent(eventsList[position], userName)
     }
 
     // Return the size of your dataset (invoked by the layout manager)

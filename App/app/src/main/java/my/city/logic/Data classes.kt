@@ -89,6 +89,11 @@ data class Event(
     lateinit var endEvent: Timestamp
 
     @Exclude
+    var isUserJoined: Boolean = false
+        @Exclude get
+        @Exclude set
+
+    @Exclude
     var guestsUserNames: MutableList<String> = mutableListOf()
         @Exclude get
         @Exclude set

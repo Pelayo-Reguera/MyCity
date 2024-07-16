@@ -107,7 +107,7 @@ object RemoteDatabase {
     /**
      * Collects all the user's public information attached to the name provided
      *
-     * @param userName
+     * @param userName The original username when the account was created
      * @param onSuccess Actions to do when the user's information was successfully collected
      * @param onFailure Actions to do in case it was nos possible to complete the request
      * */
@@ -140,38 +140,6 @@ object RemoteDatabase {
                 "Error when retrieving the user's document", it
             )
             onFailure(Tags.PROFILE_DOCUMENT_ERROR)
-        }
-    }
-
-    /**
-     * Finds users starting with the user name provided
-     *
-     * @param onSuccess Actions to do when a list of maximum 10 results is generated containing the
-     * public user name of each person associated with its document's ID (the original user name)
-     * @param onFailure Actions to do in case it was nos possible to complete the request
-     * */
-    fun findUser(
-        userName: String,
-        onSuccess: (Map<String, String>) -> Unit,
-        onFailure: (Tags) -> Unit,
-    ) {
-        val db = Firebase.firestore
-        val nextLetter = userName.substring(0, userName.lastIndex) +
-                (userName.last() + 1)
-        val query = db.collection(RemoteDBCollections.USERS.value)
-            .whereGreaterThanOrEqualTo(RemoteDBFields.NAME.value, userName)
-            .whereLessThan(RemoteDBFields.NAME.value, nextLetter)
-            .limit(10)
-        query.get().addOnSuccessListener { result ->
-            onSuccess(result.documents.associate {
-                it.getString(RemoteDBFields.NAME.value).toString() to it.id
-            })
-        }.addOnFailureListener {
-            Log.e(
-                Tags.REMOTE_DATABASE_ERROR.toString(),
-                "Error finding the user in the database", it
-            )
-            onFailure(Tags.REMOTE_DATABASE_ERROR)
         }
     }
 
@@ -227,6 +195,112 @@ object RemoteDatabase {
                 it
             )
             onFailure(Tags.PROFILE_DOCUMENT_ERROR)
+        }
+    }
+
+    /**
+     * Finds users starting with the user name provided
+     *
+     * @param userName
+     * @param onSuccess Actions to do when a list of maximum 10 results is generated containing the
+     * public user name of each person associated with its document's ID (the original user name)
+     * @param onFailure Actions to do in case it was nos possible to complete the request
+     * */
+    fun findUser(
+        userName: String,
+        onSuccess: (Map<String, String>) -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        val db = Firebase.firestore
+        val nextLetter = userName.substring(0, userName.lastIndex) +
+                (userName.last() + 1)
+        val query = db.collection(RemoteDBCollections.USERS.value)
+            .whereGreaterThanOrEqualTo(RemoteDBFields.NAME.value, userName)
+            .whereLessThan(RemoteDBFields.NAME.value, nextLetter)
+            .limit(10)
+        query.get().addOnSuccessListener { result ->
+            onSuccess(result.documents.associate {
+                it.getString(RemoteDBFields.NAME.value).toString() to it.id
+            })
+        }.addOnFailureListener {
+            Log.e(
+                Tags.REMOTE_DATABASE_ERROR.toString(),
+                "Error finding the user in the database", it
+            )
+            onFailure(Tags.REMOTE_DATABASE_ERROR)
+        }
+    }
+
+    /**
+     * It includes the specified user to an Event
+     *
+     * @param eventId The unique identifier of the Event
+     * @param userName The original username when the account was created
+     * @param onSuccess Actions to do when the user was subscribed correctly
+     * @param onFailure Actions to do when it was not possible to subscribe to the Event
+     * */
+    fun joinEvent(
+        eventId: String,
+        userName: String,
+        onSuccess: () -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        val db = Firebase.firestore
+
+        db.runBatch {
+            it.set(
+                db.collection(RemoteDBCollections.EVENTS.value).document(eventId)
+                    .collection(RemoteDBCollections.GUESTS.value).document(userName),
+                hashMapOf<String, String>()
+            )
+            it.set(
+                db.collection(RemoteDBCollections.USERS.value).document(userName)
+                    .collection(RemoteDBCollections.JOINED_EVENTS.value).document(eventId),
+                hashMapOf<String, String>()
+            )
+        }.addOnSuccessListener { onSuccess() }.addOnFailureListener {
+            Log.w(
+                Tags.REMOTE_DATABASE_ERROR.toString(),
+                "There was a problem subscribing the user to the Event",
+                it
+            )
+            onFailure(Tags.REMOTE_DATABASE_ERROR)
+        }
+    }
+
+    /**
+     * It removes the specified user from an Event
+     *
+     * @param eventId The unique identifier of the Event
+     * @param userName The original username when the account was created
+     * @param onSuccess Actions to do when the user was unsubscribed correctly
+     * @param onFailure Actions to do when it was not possible to unsubscribe from the Event
+     * */
+    fun disjoinEvent(
+        eventId: String,
+        userName: String,
+        onSuccess: () -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        val db = Firebase.firestore
+
+        db.runBatch {
+            it.delete(
+                db.collection(RemoteDBCollections.EVENTS.value).document(eventId)
+                    .collection(RemoteDBCollections.GUESTS.value).document(userName)
+            )
+
+            it.delete(
+                db.collection(RemoteDBCollections.USERS.value).document(userName)
+                    .collection(RemoteDBCollections.JOINED_EVENTS.value).document(eventId)
+            )
+        }.addOnSuccessListener { onSuccess() }.addOnFailureListener {
+            Log.w(
+                Tags.REMOTE_DATABASE_ERROR.toString(),
+                "There was a problem removing the user from the Event",
+                it
+            )
+            onFailure(Tags.REMOTE_DATABASE_ERROR)
         }
     }
 
@@ -310,7 +384,7 @@ object RemoteDatabase {
     suspend fun createEvent(
         event: Event,
         onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit,
+        onFailure: (Tags) -> Unit,
     ) {
         val db = Firebase.firestore
         val challenges: List<Challenge> = event.challenges.toList()
@@ -320,21 +394,25 @@ object RemoteDatabase {
             doc.id,
             event.eventImgURIs,
             {// When all the images where uploaded correctly
-                doc.set(event)
-                    .addOnSuccessListener { // A subcollection named 'challenges' is created in the Event in case it has challenges
-                        db.runBatch { it1 ->
-                            for (challenge in challenges) {
-                                it1.set(
-                                    doc.collection(RemoteDBCollections.CHALLENGES.value)
-                                        .document(),
-                                    challenge
-                                )
-                            }
-                        }.addOnSuccessListener { onSuccess() }
-                            .addOnFailureListener { onFailure(it) }
-                    }.addOnFailureListener(onFailure)
+                db.runBatch {
+                    it.set(doc, event)
+                    for (challenge in challenges) {
+                        it.set(
+                            doc.collection(RemoteDBCollections.CHALLENGES.value)
+                                .document(),
+                            challenge
+                        )
+                    }
+                }.addOnSuccessListener { onSuccess() }.addOnFailureListener {
+                    Log.e(
+                        Tags.REMOTE_DATABASE_ERROR.toString(),
+                        "There was a problem creating the event",
+                        it
+                    )
+                    onFailure(Tags.REMOTE_DATABASE_ERROR)
+                }
             },
-            onFailure
+            { onFailure(Tags.REMOTE_DATABASE_ERROR) }
         )
     }
 }

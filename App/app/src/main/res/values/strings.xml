@@ -170,4 +170,5 @@
     <string name="menu_item_settings">Ajustes</string>
     <string name="user_form_txtConfPassword">Confirmar contraseña*</string>
     <string name="user_form_txtLocation">Ciudad*</string>
+    <string name="btnAttendance_pressed">¡Unido!</string>
 </resources>
