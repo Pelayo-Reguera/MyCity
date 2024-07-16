@@ -14,6 +14,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.userProfileChangeRequest
@@ -173,8 +174,13 @@ class UserVM : ViewModel() {
                     onFailure(Tags.LOGIN_ERROR)
                 }
         }.addOnFailureListener {
-            Log.d(Tags.LOGIN_FAILURE.toString(), "The credentials are incorrect")
-            onFailure(Tags.LOGIN_FAILURE)
+            if (it is FirebaseAuthInvalidCredentialsException) {
+                Log.d(Tags.LOGIN_FAILURE.toString(), "The credentials are incorrect")
+                onFailure(Tags.LOGIN_FAILURE)
+            } else {
+                Log.d(Tags.REMOTE_DATABASE_ERROR.toString(), "There's no internet connection")
+                onFailure(Tags.REMOTE_DATABASE_ERROR)
+            }
         }
     }
 

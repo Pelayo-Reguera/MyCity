@@ -154,6 +154,14 @@ class LogInFragment : Fragment(R.layout.fragment_log_in) {
                                 ).show()
                             }
 
+                            Tags.REMOTE_DATABASE_ERROR -> {
+                                Toast.makeText(
+                                    context,
+                                    getString(R.string.internet_connection_error),
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                            }
+
                             else -> {// LOGIN_ERROR
                                 signInState = State.FAILURE
                                 Toast.makeText(
