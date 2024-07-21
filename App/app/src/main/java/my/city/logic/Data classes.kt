@@ -64,7 +64,7 @@ data class Event(
     var eventImgURIs: MutableList<String> = mutableListOf(),
     var organizers: MutableList<String> = mutableListOf(),
     var guestsCapacity: Int = 10,
-    var guestsNJoined: Int = 0,
+//    var guestsNJoined: Int = 0, Cloud Functions needs a payment
 ) {
 
     @Exclude
@@ -111,9 +111,9 @@ data class Event(
         endEvent: LocalDateTime,
         guestsUserNames: MutableList<String> = mutableListOf(),
         guestsCapacity: Int = 10,
-        guestsNJoined: Int = 0,
+//        guestsNJoined: Int = 0,
         id: String = "", //It's the last one to avoid change all the calls to this constructor
-    ) : this(eventImgURIs, organizers, guestsCapacity, guestsNJoined) {
+    ) : this(eventImgURIs, organizers, guestsCapacity/*, guestsNJoined*/) {
         this.id = id
         this.name = name
         this.eventDrawables = eventDrawables
@@ -149,7 +149,7 @@ data class Event(
             getEndLocalDateTime(),
             guestsUserNames,
             guestsCapacity,
-            guestsNJoined,
+//            guestsNJoined,
             id
         )
     }
