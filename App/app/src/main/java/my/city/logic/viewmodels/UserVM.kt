@@ -45,7 +45,7 @@ class UserVM : ViewModel() {
     val coins: MutableLiveData<MutableMap<String, Int>> = MutableLiveData()
     var birthdate: Timestamp = Timestamp.now()
     var gender: String = ""
-    var isAnonymous: MutableLiveData<Boolean> = MutableLiveData(false)
+    var isAnonymous: MutableLiveData<Boolean> = MutableLiveData(true)
 
     /** Whether the user is connected to internet or not */
     var isConnected = false
@@ -164,7 +164,7 @@ class UserVM : ViewModel() {
             currentUser.value = it.user
             Firebase.auth.getAccessToken(true)
                 .addOnSuccessListener {
-                    currentUser.value?.let { user -> getUserData(user, onSuccess, onFailure) }
+                    getUserData(onSuccess, onFailure)
                 }.addOnFailureListener { e ->
                     Log.e(
                         Tags.LOGIN_ERROR.toString(),
@@ -188,38 +188,41 @@ class UserVM : ViewModel() {
      * It requests to the [database layer][RemoteDatabase] the information stored about the provided
      * user
      *
-     * @param userData [FirebaseUser] with basic information to identify its documents
      * @param onSuccess Actions to do when the user's information was successfully collected
      * @param onFailure Actions to do in case it was nos possible to complete the request
      *
      * @see [RemoteDatabase.getPublicAndPrivateUserInfo]
      * */
-    private fun getUserData(
-        userData: FirebaseUser,
+    fun getUserData(
         onSuccess: () -> Unit,
         onFailure: (Tags) -> Unit,
-    ) {
-        RemoteDatabase.getPublicAndPrivateUserInfo(
-            userData.displayName.toString(), { user ->
-                userName.value = user.name
-                email = user.email
-                location = GeoPoint(user.location.latitude, user.location.longitude)
-                coins.value = user.coins
-                gender = user.gender
-                birthdate = user.birthdate
-                onSuccess()
-                RemoteStorage.downloadProfilePhoto(
-                    user.name,
-                    { file ->
-                        Drawable.createFromPath(file.path)?.let { drawable ->
-                            profilePhoto.value = drawable
-                        }
-                    },
-                    onFailure
-                )
-            },
-            onFailure
-        )
+    ): Boolean {
+        currentUser.value?.let {// Check if there is an opened session
+            RemoteDatabase.getPublicAndPrivateUserInfo(// Retrieves the user data
+                it.displayName.toString(), { user ->
+                    userName.value = user.name
+                    email = user.email
+                    location = GeoPoint(user.location.latitude, user.location.longitude)
+                    coins.value = user.coins
+                    gender = user.gender
+                    birthdate = user.birthdate
+                    isAnonymous.value = false
+                    onSuccess()
+                    RemoteStorage.downloadProfilePhoto(
+                        user.name,
+                        { file ->
+                            Drawable.createFromPath(file.path)?.let { drawable ->
+                                profilePhoto.value = drawable
+                            }
+                        },
+                        onFailure
+                    )
+                },
+                onFailure
+            )
+            return true
+        }
+        return false
     }
 
     /**
@@ -256,6 +259,9 @@ class UserVM : ViewModel() {
                 userName.value = userData.displayName.toString()
                 email = userData.email.toString()
                 this.location = location
+                birthdate = birthDate
+                this.gender = gender
+                isAnonymous.value = false
                 onSuccess()
                 imgProfile?.let { photo ->
                     RemoteStorage.storeProfilePhoto(

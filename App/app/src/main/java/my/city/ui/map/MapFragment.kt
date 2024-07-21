@@ -105,7 +105,11 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (userVM.currentUser.value == null) {
+        val isLogIn = userVM.getUserData({},
+            // In case the user is LogIn but an error arose when retrieving the user data, it redirects
+            // to the logIn view
+            { findNavController().navigate(MapFragmentDirections.toFragmentLogIn()) })
+        if (!isLogIn) {
             findNavController().navigate(MapFragmentDirections.toFragmentLogIn())
         } else {
             androidLocationProvider = AndroidLocationProvider(requireContext())
