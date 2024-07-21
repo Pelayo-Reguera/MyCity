@@ -69,6 +69,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:contentDescription="@string/fabEventInfo"
+        android:enabled="false"
         app:maxImageSize="30dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

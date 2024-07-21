@@ -25,7 +25,11 @@ import java.time.format.DateTimeFormatter
  * This class is in charge of generating components based on a layout which later will be
  * used in a recycler view
  * */
-class ExplorerAdapter(private val eventsList: List<Event>, private val userName: String) :
+class ExplorerAdapter(
+    private val eventsList: List<Event>,
+    private val isAnonymousUser: Boolean,
+    private val userName: String = "",
+) :
     RecyclerView.Adapter<ExplorerAdapter.EventViewHolder>() {
 
     /**
@@ -40,7 +44,7 @@ class ExplorerAdapter(private val eventsList: List<Event>, private val userName:
         private val txtDescription: TextView = view.findViewById(R.id.txtDescription)
         private val btnAttendance: MaterialButton = view.findViewById(R.id.btnAttendance)
 
-        fun bindEvent(event: Event, userName: String) {
+        fun bindEvent(event: Event, isAnonymous: Boolean, userName: String) {
             if (event.eventDrawables.size > 0) {
                 imgEvent.setImageDrawable(event.eventDrawables[0])
             }
@@ -50,21 +54,45 @@ class ExplorerAdapter(private val eventsList: List<Event>, private val userName:
                     .format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
             txtDescription.text = event.street
 
-            btnAttendance.setOnClickListener {
-                if (event.isUserJoined) {
-                    RemoteDatabase.disjoinEvent(event.id, userName, {
-                        event.isUserJoined = !event.isUserJoined
-                        btnAttendance.text =
-                            btnAttendance.context.getString(R.string.btnAttendance)
-                        btnAttendance.setBackgroundColor(btnAttendance.context.getColor(R.color.orange1))
+            if (!isAnonymous) {//INFO: Improve by showing a message of an internet connection error
+                RemoteDatabase.isUserJoined(
+                    userName, event.id,
+                    { exists ->
+                        if (exists) {
+                            event.isUserJoined = true
+                            btnAttendance.text =
+                                btnAttendance.context.getString(R.string.btnAttendance_pressed)
+                            btnAttendance.setBackgroundColor(
+                                btnAttendance.context.getColor(R.color.transparent_brown)
+                            )
+                        }
                     }, {})
-                } else {
-                    RemoteDatabase.joinEvent(event.id, userName, {
-                        event.isUserJoined = !event.isUserJoined
-                        btnAttendance.text =
-                            btnAttendance.context.getString(R.string.btnAttendance_pressed)
-                        btnAttendance.setBackgroundColor(btnAttendance.context.getColor(R.color.transparent_brown))
-                    }, {})
+
+                btnAttendance.isEnabled = true
+                btnAttendance.setOnClickListener {
+                    if (event.isUserJoined) {
+                        RemoteDatabase.disjoinEvent(event.id, userName, {
+                            event.isUserJoined = !event.isUserJoined
+                            btnAttendance.text =
+                                btnAttendance.context.getString(R.string.btnAttendance)
+                            btnAttendance.setBackgroundColor(
+                                btnAttendance.context.getColor(
+                                    R.color.orange1
+                                )
+                            )
+                        }, {})
+                    } else {
+                        RemoteDatabase.joinEvent(event.id, userName, {
+                            event.isUserJoined = !event.isUserJoined
+                            btnAttendance.text =
+                                btnAttendance.context.getString(R.string.btnAttendance_pressed)
+                            btnAttendance.setBackgroundColor(
+                                btnAttendance.context.getColor(
+                                    R.color.transparent_brown
+                                )
+                            )
+                        }, {})
+                    }
                 }
             }
 
@@ -90,7 +118,7 @@ class ExplorerAdapter(private val eventsList: List<Event>, private val userName:
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.bindEvent(eventsList[position], userName)
+        viewHolder.bindEvent(eventsList[position], isAnonymousUser, userName)
     }
 
     // Return the size of your dataset (invoked by the layout manager)
