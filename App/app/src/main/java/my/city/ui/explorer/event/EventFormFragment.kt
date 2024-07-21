@@ -26,6 +26,7 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -220,8 +221,7 @@ class EventFormFragment : Fragment(R.layout.fragment_event_form), DialogListener
             // The text should be cleared
             binding.txteEventOrganizers.setText("")
             //The options should be remove in order to avoid to show the same user names again
-            val b = (binding.txteEventOrganizers.adapter as ArrayAdapter<*>)
-            b.clear()
+            (binding.txteEventOrganizers.adapter as ArrayAdapter<*>).clear()
         }
 
         txteEventDescription.setOnFocusChangeListener { _, hasFocus ->
@@ -358,34 +358,44 @@ class EventFormFragment : Fragment(R.layout.fragment_event_form), DialogListener
                 isValid
             }
 
-            if (isValid && userVm.isConnected) {
-                eventsListVM.addEvent(
-                    Event(
-                        eventVM.name,
-                        eventVM.eventDrawables,
-                        eventVM.eventImgURIs,
-                        eventVM.organizers.keys.mapIndexed { index, s ->
-                            if (index == 0) {
-                                userVm.currentUser.value?.displayName.toString()
-                            } else {
-                                eventVM.usersFound[s].toString()
+            if (isValid) {
+                if (userVm.isConnected) {
+                    // The default 'add image' is removed from the list of drawables to not show it as an
+                    // image of the Event. This only affects when being showed from the local memory, in
+                    // the remote database everything is correct because it depends on eventVM.eventImgURIs
+                    // not in the eventVM.eventDrawables
+                    eventVM.eventDrawables.removeAt(0)
+                    eventsListVM.addEvent(
+                        Event(
+                            eventVM.name,
+                            eventVM.eventDrawables,
+                            eventVM.eventImgURIs,
+                            eventVM.organizers.keys.mapIndexed { index, s ->
+                                if (index == 0) {
+                                    userVm.currentUser.value?.displayName.toString()
+                                } else {
+                                    eventVM.usersFound[s].toString()
+                                }
                             }
-                        }
-                            .toMutableList(),
-                        eventVM.description,
-                        eventVM.challenges,
-                        eventVM.location!!,
-                        eventVM.street,
-                        eventVM.startEvent!!,
-                        eventVM.endEvent!!,
-                        guestsCapacity = eventVM.guestsCapacity
-                    ),
-                    getString(R.string.msgDialog_createdEvent)
-                ) { /*Do nothing*/ } //INFO: Improve with local memory persistence
+                                .toMutableList(),
+                            eventVM.description,
+                            eventVM.challenges,
+                            eventVM.location!!,
+                            eventVM.street,
+                            eventVM.startEvent!!,
+                            eventVM.endEvent!!,
+                            guestsCapacity = eventVM.guestsCapacity
+                        ),
+                        getString(R.string.msgDialog_createdEvent)
+                    ) { /*Do nothing*/ } //INFO: Improve with local memory persistence
 
-                findNavController().navigate(
-                    EventFormFragmentDirections.toFragmentExplorer()
-                )
+                    findNavController().navigate(
+                        EventFormFragmentDirections.toFragmentExplorer()
+                    )
+                } else {
+                    Toast.makeText(context, R.string.internet_connection_error, Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
         }
     }
