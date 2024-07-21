@@ -16,11 +16,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MediatorLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import my.city.R
 import my.city.databinding.FragmentEventsExplorerBinding
+import my.city.logic.Event
 import my.city.logic.viewmodels.EventsListVM
 import my.city.logic.viewmodels.State
 import my.city.logic.viewmodels.UserVM
@@ -41,6 +43,25 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
     private val eventsListVM: EventsListVM by activityViewModels()
     private val userVM: UserVM by activityViewModels()
 
+    /** It is used to observe at the same time two different LiveData objects*/
+    private val mediatorEventsAndUser by lazy {
+        MediatorLiveData<Pair<MutableList<Event>, Boolean>>().apply {
+            addSource(eventsListVM.events) {
+                value = Pair(
+                    it,
+                    userVM.isAnonymous.value ?: false
+                )
+            }
+            addSource(userVM.isAnonymous) {
+                binding.fabCreateEvent.isEnabled = !it
+                eventsListVM.events.value?.let { list ->
+                    value =
+                        Pair(list, it)
+                }
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Use the static method from the class binding .bind(<<view>>) when the view is already
@@ -49,8 +70,13 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
         rvEvents = binding.rvEvents
         rvEvents.setHasFixedSize(true)
 
-        eventsListVM.events.observe(viewLifecycleOwner) {
-            rvEvents.adapter = ExplorerAdapter(it, userVM.userName.value.toString())
+        mediatorEventsAndUser.observe(viewLifecycleOwner) {
+            if (it.second) {//If it's anonymous
+                rvEvents.adapter = ExplorerAdapter(it.first, true)
+            } else {
+                rvEvents.adapter =
+                    ExplorerAdapter(it.first, false, userVM.userName.value.toString())
+            }
         }
 
         // Observer executed when an Event is created to show dialog
@@ -103,9 +129,6 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
                 }
             }
         }
-
-        //FIXME: Uncomment for the final product
-//        binding.fabCreateEvent.isEnabled = !userVM.user.isAnonymous
 
         binding.fabCreateEvent.setOnClickListener {
             findNavController().navigate(ExplorerEventsFragmentDirections.toEventFormNavigation())
