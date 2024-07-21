@@ -10,6 +10,8 @@ package my.city.ui.explorer.event
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -23,9 +25,11 @@ import com.google.android.material.carousel.MultiBrowseCarouselStrategy
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.launch
 import my.city.R
+import my.city.database.RemoteDatabase
 import my.city.databinding.FragmentEventBinding
 import my.city.logic.viewmodels.EventVM
 import my.city.logic.viewmodels.EventsListVM
+import my.city.logic.viewmodels.UserVM
 import my.city.ui.explorer.event.challenges.EventChallengesFragment
 
 class EventFragment : Fragment(R.layout.fragment_event) {
@@ -42,6 +46,7 @@ class EventFragment : Fragment(R.layout.fragment_event) {
     private val adapter: EventInfoAdapter by lazy { EventInfoAdapter(this) }
     private val eventsListVM: EventsListVM by activityViewModels()
     private val eventVM: EventVM by navGraphViewModels(R.id.event_navigation)
+    private val userVM: UserVM by activityViewModels()
     private val args: EventFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,13 +58,8 @@ class EventFragment : Fragment(R.layout.fragment_event) {
 
         lifecycleScope.launch {
             eventsListVM.events.value?.let {
-                for (event in it) {
-                    if (event.id == args.eventID) {
-                        //TODO: Add animation to the image and keep empty the rest of fields
-                        eventVM.event.value = event
-                        break
-                    }
-                }
+                val e = it.find { event -> event.id == args.eventID }
+                e?.let { event -> eventVM.event.value = event }
             }
         }
 
@@ -80,19 +80,77 @@ class EventFragment : Fragment(R.layout.fragment_event) {
         }.attach()
         activity?.actionBar?.hide()
 
-
         val carousel = CarouselLayoutManager()
         carousel.setCarouselStrategy(MultiBrowseCarouselStrategy())
         binding.rvEventImages.layoutManager = carousel
         eventVM.event.observe(viewLifecycleOwner) {
             if (it.eventDrawables.size > 0) {
                 binding.rvEventImages.adapter = EventImagesAdapter(it.eventDrawables)
+            } else {
+                context?.let { it1 ->
+                    getDrawable(it1, R.drawable.img_default_party)?.let { drawable ->
+                        binding.rvEventImages.adapter = EventImagesAdapter(listOf(drawable))
+                    }
+                }
             }
             //INFO: See to make a toolbar transparent
 //            findNavController().currentDestination?.label = eventVM.event.value?.name
         }
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(binding.rvEventImages)
-        binding.fabJoin.setOnClickListener { /*TODO: Subscribe to the Event*/ }
+
+        if (userVM.isAnonymous.value == false) {
+            binding.fabJoin.isEnabled = true
+            eventVM.event.value?.let {
+                if (it.isUserJoined) {
+                    context?.let { it1 ->
+                        binding.fabJoin.setImageDrawable(
+                            getDrawable(
+                                it1,
+                                R.drawable.blank_baseline_celebration_24
+                            )
+                        )
+                    }
+                }
+            }
+            binding.fabJoin.setOnClickListener {
+                eventVM.event.value?.let {
+                    userVM.userName.value?.let { username ->
+                        if (userVM.isConnected) {
+                            if (it.isUserJoined) {
+                                RemoteDatabase.disjoinEvent(it.id, username, {
+                                    it.isUserJoined = !it.isUserJoined
+                                    context?.let { it1 ->
+                                        binding.fabJoin.setImageDrawable(
+                                            getDrawable(it1, R.drawable.outline_celebration_30)
+                                        )
+                                    }
+                                }, {})
+
+                            } else {
+                                RemoteDatabase.joinEvent(it.id, username, {
+                                    it.isUserJoined = !it.isUserJoined
+                                    context?.let { it1 ->
+                                        binding.fabJoin.setImageDrawable(
+                                            getDrawable(
+                                                it1,
+                                                R.drawable.blank_baseline_celebration_24
+                                            )
+                                        )
+                                    }
+                                }, {})
+                            }
+                        } else {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.internet_connection_error),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+
+            }
+        }
     }
 }
