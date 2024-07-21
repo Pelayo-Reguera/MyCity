@@ -30,6 +30,7 @@ class EventsListVM : ViewModel() {
         get() {
             RemoteDatabase.getEvents(field, { list, event ->
                 // Download the images and load them in the Event
+                // A coroutine for each event is created to make the loading more dynamic
                 viewModelScope.launch {
                     event.eventImgURIs.lastOrNull()?.let { uri ->
                         val segments = Uri.parse(uri).pathSegments
@@ -47,7 +48,11 @@ class EventsListVM : ViewModel() {
                     field.value = list
                 }
             }, {
-                Log.e(Tags.REMOTE_DATABASE_ERROR.toString(), it.message.toString())
+                Log.e(
+                    Tags.REMOTE_DATABASE_ERROR.toString(),
+                    "There was a problem downloading the published events",
+                    it
+                )
             })
             return field
         }
@@ -77,11 +82,6 @@ class EventsListVM : ViewModel() {
                 onSuccess()
             }, {
                 processState = State.FAILURE
-                Log.e(
-                    Tags.REMOTE_DATABASE_ERROR.toString(),
-                    "There was a problem creating the event",
-                    it
-                )
             })
         }
     }
