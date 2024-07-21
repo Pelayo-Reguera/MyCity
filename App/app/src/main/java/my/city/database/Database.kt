@@ -11,6 +11,7 @@ package my.city.database
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
@@ -116,21 +117,20 @@ object RemoteDatabase {
         //INFO: Try to use the name saved in its own document as a field instead of the document ID
         val doc = db.collection(RemoteDBCollections.USERS.value).document(userName)
         doc.get().addOnSuccessListener { docResult ->
-            try {
-                val user: User? = docResult.toObject<User>()
-                if (user != null) {
-                    onSuccess(user)
-                } else {
-                    Log.i(
+            if (docResult.exists()) {
+                try {
+                    docResult.toObject<User>()?.let(onSuccess)
+                } catch (re: RuntimeException) {
+                    Log.e(
                         Tags.PROFILE_DOCUMENT_ERROR.toString(),
-                        "The user's document doesn't exists"
+                        "An object of type User is not well constructed in the database", re
                     )
                     onFailure(Tags.PROFILE_DOCUMENT_ERROR)
                 }
-            } catch (re: RuntimeException) {
-                Log.e(
+            } else {
+                Log.i(
                     Tags.PROFILE_DOCUMENT_ERROR.toString(),
-                    "An object of type User is not well constructed in the database", re
+                    "The user's document doesn't exists"
                 )
                 onFailure(Tags.PROFILE_DOCUMENT_ERROR)
             }
@@ -246,26 +246,39 @@ object RemoteDatabase {
         onFailure: (Tags) -> Unit,
     ) {
         val db = Firebase.firestore
+        val doc = db.collection(RemoteDBCollections.EVENTS.value).document(eventId)
 
-        db.runBatch {
-            it.set(
-                db.collection(RemoteDBCollections.EVENTS.value).document(eventId)
-                    .collection(RemoteDBCollections.GUESTS.value).document(userName),
-                hashMapOf<String, String>()
-            )
-            it.set(
-                db.collection(RemoteDBCollections.USERS.value).document(userName)
-                    .collection(RemoteDBCollections.JOINED_EVENTS.value).document(eventId),
-                hashMapOf<String, String>()
-            )
-        }.addOnSuccessListener { onSuccess() }.addOnFailureListener {
-            Log.w(
-                Tags.REMOTE_DATABASE_ERROR.toString(),
-                "There was a problem subscribing the user to the Event",
-                it
-            )
-            onFailure(Tags.REMOTE_DATABASE_ERROR)
-        }
+        doc.collection(RemoteDBCollections.GUESTS.value).count().get(AggregateSource.SERVER)
+            .addOnSuccessListener { query ->
+                db.runTransaction { transaction ->
+                    if (query.count < transaction.get(doc)[RemoteDBFields.GUESTS_CAPACITY.value] as Long) {
+                        transaction.set(
+                            doc.collection(RemoteDBCollections.GUESTS.value).document(userName),
+                            hashMapOf<String, String>()
+                        )
+                        transaction.set(
+                            db.collection(RemoteDBCollections.USERS.value).document(userName)
+                                .collection(RemoteDBCollections.JOINED_EVENTS.value)
+                                .document(eventId),
+                            hashMapOf<String, String>()
+                        )
+                    }
+                }.addOnSuccessListener { onSuccess() }.addOnFailureListener {
+                    Log.w(
+                        Tags.REMOTE_DATABASE_ERROR.toString(),
+                        "There was a problem subscribing the user to the Event",
+                        it
+                    )
+                    onFailure(Tags.REMOTE_DATABASE_ERROR)
+                }
+            }.addOnFailureListener {
+                Log.w(
+                    Tags.REMOTE_DATABASE_ERROR.toString(),
+                    "There was a problem subscribing the user to the Event",
+                    it
+                )
+                onFailure(Tags.REMOTE_DATABASE_ERROR)
+            }
     }
 
     /**
@@ -373,6 +386,27 @@ object RemoteDatabase {
                     }
                 }
             }.addOnFailureListener { onFailure(it) }
+    }
+
+    /**
+     * It determines whether the user joined the event or not
+     *
+     * @param userName The original username when the account was created
+     * @param eventID The unique identifier of the Event
+     * @param onSuccess Actions to do when the user is actually joined the event
+     * @param onFailure Actions to do when the user didn't joined to the event
+     * */
+    fun isUserJoined(
+        userName: String,
+        eventID: String,
+        onSuccess: (Boolean) -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        val db = Firebase.firestore
+        db.collection(RemoteDBCollections.EVENTS.value).document(eventID)
+            .collection(RemoteDBCollections.GUESTS.value).document(userName).get()
+            .addOnSuccessListener { onSuccess(it.exists()) }
+            .addOnFailureListener { onFailure(Tags.REMOTE_DATABASE_ERROR) }
     }
 
     /**
