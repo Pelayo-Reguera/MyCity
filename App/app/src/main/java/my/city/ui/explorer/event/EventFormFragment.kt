@@ -597,7 +597,7 @@ class EventFormFragment : Fragment(R.layout.fragment_event_form), DialogListener
             TypedValue.COMPLEX_UNIT_DIP, 48f, resources.displayMetrics
         )
         chip.chipBackgroundColor =
-            context?.let { ColorStateList.valueOf(it.getColor(R.color.brown_transparent)) }
+            context?.let { ColorStateList.valueOf(it.getColor(R.color.brown_chip_background)) }
         chip.chipIcon =
             getDrawable(
                 requireContext(),

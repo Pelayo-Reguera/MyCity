@@ -10,13 +10,14 @@
 <resources>
     <color name="orange1">#F0B000</color>
     <color name="orange1_1">#D46800</color>
+    <color name="orange2">#B0AC7B1C</color>
     <color name="alternative_orange">#EA8202</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black">#000000</color>
-    <color name="orange_surface">#FFECDF</color>
+    <color name="orange_surface">#FFEDD6</color>
     <color name="yellow">#F0CE00</color>
-    <color name="brown">#7C5900</color>
-    <color name="brown_transparent">#6B7C5900</color>
-    <color name="transparent_brown">#32BD8A08</color>
+    <color name="white_orange">#FFEBC8</color>
+    <color name="brown_chip_background">#6B7C5900</color>
+    <color name="transparent_brown">#8FD8950F</color>
     <color name="red">#D50000</color>
 </resources>

@@ -1,3 +1,11 @@
+<!--
+  ~ Copyright (c) 2024.
+  ~ MyCity © 2024 by Pelayo Reguera García is licensed under
+  ~ Attribution-NonCommercial-NoDerivatives 4.0 International.
+  ~
+  ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
+  -->
+
 <resources>
     <!-- Base application theme. -->
     <style name="Theme.MyCity" parent="Theme.Material3.DayNight.NoActionBar">
@@ -7,11 +15,11 @@
         <item name="colorOnPrimaryContainer">@color/white</item>
         <item name="colorPrimaryVariant">@color/alternative_orange</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/brown</item>
-        <item name="colorOnSecondary">@color/brown</item>
-        <item name="colorSecondaryContainer">@color/brown</item>
-        <item name="colorOnSecondaryContainer">@color/brown</item>
-        <item name="colorSecondaryVariant">@color/brown</item>
+        <item name="colorSecondary">@color/white_orange</item>
+        <item name="colorOnSecondary">@color/white_orange</item>
+        <item name="colorSecondaryContainer">@color/white_orange</item>
+        <item name="colorOnSecondaryContainer">@color/white_orange</item>
+        <item name="colorSecondaryVariant">@color/white_orange</item>
         <!-- Ternary brand color. -->
         <item name="colorOnTertiary">@color/white</item>
         <item name="colorTertiaryContainer">@color/orange1_1</item>
