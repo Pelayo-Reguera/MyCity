@@ -232,6 +232,61 @@ object RemoteDatabase {
     }
 
     /**
+     * It includes the specified event in the user's favourite liked events
+     *
+     * @param eventId The unique identifier of the Event
+     * @param userName The original username when the account was created
+     * @param onSuccess Actions to do when the user was subscribed correctly
+     * @param onFailure Actions to do when it was not possible to subscribe to the Event
+     * */
+    fun likeEvent(
+        eventId: String,
+        userName: String,
+        onSuccess: () -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        val db = Firebase.firestore
+        db.collection(RemoteDBCollections.USERS.value).document(userName)
+            .collection(RemoteDBCollections.LIKED_EVENTS.value).document(eventId)
+            .set(hashMapOf<String, String>())
+            .addOnSuccessListener { onSuccess() }.addOnFailureListener {
+                Log.w(
+                    Tags.REMOTE_DATABASE_ERROR.toString(),
+                    "There was a problem adding to favourites the Event",
+                    it
+                )
+                onFailure(Tags.REMOTE_DATABASE_ERROR)
+            }
+    }
+
+    /**
+     * It removes the specified user from an Event
+     *
+     * @param eventId The unique identifier of the Event
+     * @param userName The original username when the account was created
+     * @param onSuccess Actions to do when the user was unsubscribed correctly
+     * @param onFailure Actions to do when it was not possible to unsubscribe from the Event
+     * */
+    fun dislikeEvent(
+        eventId: String,
+        userName: String,
+        onSuccess: () -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
+        val db = Firebase.firestore
+        db.collection(RemoteDBCollections.USERS.value).document(userName)
+            .collection(RemoteDBCollections.LIKED_EVENTS.value).document(eventId).delete()
+            .addOnSuccessListener { onSuccess() }.addOnFailureListener {
+                Log.w(
+                    Tags.REMOTE_DATABASE_ERROR.toString(),
+                    "There was a problem adding to favourites the Event",
+                    it
+                )
+                onFailure(Tags.REMOTE_DATABASE_ERROR)
+            }
+    }
+
+    /**
      * It includes the specified user to an Event
      *
      * @param eventId The unique identifier of the Event

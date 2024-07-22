@@ -68,7 +68,7 @@ data class Event(
 ) {
 
     @Exclude
-    var id: String = ""
+    var id: String = "fake"
         @Exclude get
         @Exclude set
     lateinit var name: String
@@ -90,6 +90,11 @@ data class Event(
 
     @Exclude
     var isUserJoined: Boolean = false
+        @Exclude get
+        @Exclude set
+
+    @Exclude
+    var isFavourite: Boolean = false
         @Exclude get
         @Exclude set
 

@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 import my.city.R
 import my.city.database.RemoteDatabase
@@ -39,6 +40,7 @@ class ExplorerAdapter(
     class EventViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
         private val imgEvent: ShapeableImageView = view.findViewById(R.id.imgEvent)
+        private val icbtnLikeEvent: MaterialButton = view.findViewById(R.id.icbtnLikeEvent)
         private val txtTitle: TextView = view.findViewById(R.id.txtTitle)
         private val txtSubTitle: TextView = view.findViewById(R.id.txtSubTitle)
         private val txtDescription: TextView = view.findViewById(R.id.txtDescription)
@@ -55,6 +57,25 @@ class ExplorerAdapter(
             txtDescription.text = event.street
 
             if (!isAnonymous) {//INFO: Improve by showing a message of an internet connection error
+                icbtnLikeEvent.visibility = FloatingActionButton.VISIBLE
+                icbtnLikeEvent.setOnClickListener {
+                    if (event.isFavourite) {
+                        icbtnLikeEvent.setIconResource(R.drawable.baseline_favorite_border_24)
+                        RemoteDatabase.dislikeEvent(event.id, userName, {
+                            event.isFavourite = false
+                        }, {
+                            icbtnLikeEvent.setIconResource(R.drawable.baseline_favorite_24)
+                        })
+                    } else {
+                        icbtnLikeEvent.setIconResource(R.drawable.baseline_favorite_24)
+                        RemoteDatabase.likeEvent(event.id, userName, {
+                            event.isFavourite = true
+                        }, {
+                            icbtnLikeEvent.setIconResource(R.drawable.baseline_favorite_border_24)
+                        })
+                    }
+                }
+
                 RemoteDatabase.isUserJoined(
                     userName, event.id,
                     { exists ->

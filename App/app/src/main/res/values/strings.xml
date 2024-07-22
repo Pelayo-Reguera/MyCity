@@ -171,4 +171,5 @@
     <string name="user_form_txtConfPassword">Confirmar contraseña*</string>
     <string name="user_form_txtLocation">Ciudad*</string>
     <string name="btnAttendance_pressed">¡Unido!</string>
+    <string name="icon_btnLikeEvent">Añadir a Favoritos</string>
 </resources>

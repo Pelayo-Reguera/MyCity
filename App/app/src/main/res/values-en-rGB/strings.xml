@@ -76,4 +76,5 @@
     <string name="user_form_txtConfPassword">Confirm Password*</string>
     <string name="user_form_txtLocation">City*</string>
     <string name="btnAttendance_pressed">Joined!</string>
+    <string name="icon_btnLikeEvent">Add to liked events</string>
 </resources>
