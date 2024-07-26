@@ -20,13 +20,44 @@
         android:layout_width="@dimen/img_profile_size"
         android:layout_height="@dimen/img_profile_size"
         android:contentDescription="@string/img_profile_description"
-        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+        android:src="@drawable/default_profile"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.137"
-        android:src="@drawable/default_profile" />
+        app:layout_constraintVertical_bias="0.101"
+        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/txtPoints"
+        style="@style/TextAppearance.Material3.TitleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:text="@string/txtPoints"
+        android:textAlignment="textStart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.13"
+        app:layout_constraintStart_toEndOf="@+id/imgCoin"
+        app:layout_constraintTop_toBottomOf="@+id/txtUsername"
+        app:layout_constraintVertical_bias="0.047" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imgCoin"
+        style="@style/ShapeAppearance.Material3.Corner.Full"
+        android:layout_width="@dimen/icon_button"
+        android:layout_height="@dimen/icon_button"
+        android:layout_marginBottom="232dp"
+        android:contentDescription="@string/img_coin_description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.373"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtUsername"
+        app:layout_constraintVertical_bias="0.072"
+        app:srcCompat="@drawable/coin" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/txtUsername"
@@ -40,36 +71,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgProfile"
-        app:layout_constraintVertical_bias="0.07" />
+        app:layout_constraintVertical_bias="0.069" />
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/imgCoin"
-        style="@style/ShapeAppearance.Material3.Corner.Full"
-        android:layout_width="@dimen/icon_button"
-        android:layout_height="@dimen/icon_button"
-        android:layout_marginBottom="232dp"
-        android:contentDescription="@string/img_coin_description"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.376"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtUsername"
-        app:layout_constraintVertical_bias="0.072"
-        app:srcCompat="@drawable/coin" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/txtPoints"
-        android:layout_width="wrap_content"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabsProfile"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
-        android:text="@string/txtPoints"
-        android:textAlignment="textStart"
-        style="@style/TextAppearance.Material3.TitleLarge"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.127"
-        app:layout_constraintStart_toEndOf="@+id/imgCoin"
-        app:layout_constraintTop_toBottomOf="@+id/txtUsername"
-        app:layout_constraintVertical_bias="0.046" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgCoin"
+        app:layout_constraintVertical_bias="0.032" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vpProfileContent"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/vp_profile_content"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabsEvent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

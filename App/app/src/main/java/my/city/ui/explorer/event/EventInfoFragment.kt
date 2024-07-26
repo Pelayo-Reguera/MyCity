@@ -56,7 +56,7 @@ class EventInfoFragment : Fragment(R.layout.fragment_event_info) {
                 }
             }
 
-            binding.txtInfoOrganizers
+            binding.txtInfoOrganizers //TODO
             binding.txtInfoLocation.text = it.street
             binding.txtInfoDescription.text = it.description
         }

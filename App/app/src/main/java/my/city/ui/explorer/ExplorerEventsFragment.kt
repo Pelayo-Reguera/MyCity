@@ -67,7 +67,7 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
         // Use the static method from the class binding .bind(<<view>>) when the view is already
         // inflated and we want again an instance of the class binding
         binding = FragmentEventsExplorerBinding.bind(view)
-        rvEvents = binding.rvEvents
+        rvEvents = binding.layoutRvEvents.rvEvents
         rvEvents.setHasFixedSize(true)
 
         mediatorEventsAndUser.observe(viewLifecycleOwner) {

@@ -14,11 +14,14 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import my.city.R
 import my.city.databinding.FragmentProfileBinding
 import my.city.logic.viewmodels.UserVM
@@ -33,7 +36,20 @@ import my.city.logic.viewmodels.UserVM
 // .<<corresponding layout>>, container, false)")
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
+    class ProfileInfoAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+        override fun getItemCount(): Int = 3
+
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> ProfileJoinedEventsFragment()
+                1 -> ProfileLikedEventsFragment()
+                else -> ProfileCreatedEventsFragment()
+            }
+        }
+    }
+
     private lateinit var binding: FragmentProfileBinding
+    private val adapter: ProfileInfoAdapter by lazy { ProfileInfoAdapter(this) }
 
     // The ViewModel of its activity container is retrieved. In this case the UserVM
     private val userVm: UserVM by activityViewModels()
@@ -56,6 +72,36 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 }
             }
         }
+        binding.vpProfileContent.adapter = adapter
+        //FIXME: Clicking on the icons doesn't do anything
+        TabLayoutMediator(binding.tabsProfile, binding.vpProfileContent) { tab, position ->
+            when (position) {
+                0 ->
+                    tab.icon =
+                        context?.let {
+                            ContextCompat.getDrawable(
+                                it,
+                                R.drawable.outline_event_available_24
+                            )
+                        }
+
+                1 ->
+                    tab.icon = context?.let {
+                        ContextCompat.getDrawable(
+                            it,
+                            R.drawable.baseline_favorite_border_24
+                        )
+                    }
+
+                else -> tab.icon = context?.let {
+                    ContextCompat.getDrawable(
+                        it,
+                        R.drawable.calendar_add_on_24dp
+                    )
+                }
+            }
+        }.attach()
+
         configureMenu()
     }
 
@@ -64,12 +110,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             val menuHost: MenuHost = it
             menuHost.addMenuProvider(object : MenuProvider {
                 override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    // Infla el menú específico para este fragmento
+                    // The specific menu for this fragment
                     menuInflater.inflate(R.menu.profile_menu, menu)
                 }
 
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    // Maneja las acciones del menú aquí
+                    // Menu actions management
                     return when (menuItem.itemId) {
                         R.id.item_signOut -> {
                             userVm.signOut()

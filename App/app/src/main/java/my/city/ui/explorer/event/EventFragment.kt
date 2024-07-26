@@ -149,7 +149,6 @@ class EventFragment : Fragment(R.layout.fragment_event) {
                         }
                     }
                 }
-
             }
         }
     }
