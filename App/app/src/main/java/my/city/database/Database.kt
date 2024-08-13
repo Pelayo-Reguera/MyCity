@@ -37,12 +37,60 @@ object RemoteDatabase {
     /** This property is used for limit the number of results of events*/
     private var maxNResults: Long = 50
 
-    suspend fun getUserCreatedEvents(): QuerySnapshot? {
+    fun getUserCreatedEvents(username: String, onSuccess: (List<Event>) -> Unit, onFailure: (Tags) -> Unit) {
         val db = Firebase.firestore
+        db.collection(RemoteDBCollections.EVENTS.value)
+            .whereGreaterThan(RemoteDBFields.END_EVENT.value, Timestamp.now())
+            .whereArrayContains(RemoteDBFields.ORGANIZERS.value, username)
+            .orderBy(RemoteDBFields.START_EVENT.value).get()
+            .addOnSuccessListener {
+                onSuccess(it)
+                for (document in it.documents) {
+                    // For each document, convert it to an Event and request its challenges and execute onSuccess
+                    try {
+                        //TODO: Check if it's already ddownloaded if not downloaded. Use events' ids
+                        document.toObject<Event>()?.let { event ->
+                            event.id = document.id
+                            list.add(event)
+                            getChallenges(event, onFailure)
+                            onSuccess(list, event)
+                        }
+                    } catch (re: RuntimeException) {
+                        Log.e(
+                            Tags.REMOTE_DATABASE_ERROR.toString(),
+                            "An object of type Event is not well constructed in the database"
+                        )
+                    }
+                }
+                previousList.value = list
+            }.addOnFailureListener { onFailure() }//TODO: Pass the events list
 
-        //TODO: Change the hardcoded string in the document path
-        return db.collection(RemoteDBCollections.USERS.value).document("admin")
-            .collection(RemoteDBCollections.CREATED_EVENTS.value).get().await()
+
+        db.collection(RemoteDBCollections.EVENTS.value)
+            .orderBy(RemoteDBFields.START_EVENT.value)
+            .startAfter(lastEvent?.startEvent).limit(maxNResults).get().addOnSuccessListener {
+                val list: MutableList<Event> = previousList.value ?: mutableListOf()
+                for (document in it.documents) {
+                    // For each document, convert it to an Event and request its challenges and execute onSuccess
+                    try {
+                        document.toObject<Event>()?.let { event ->
+                            event.id = document.id
+                            list.add(event)
+                            getChallenges(event, onFailure)
+                            onSuccess(list, event)
+                        }
+                    } catch (re: RuntimeException) {
+                        Log.e(
+                            Tags.REMOTE_DATABASE_ERROR.toString(),
+                            "An object of type Event is not well constructed in the database"
+                        )
+                    }
+                }
+                previousList.value = list
+
+                // Update the reference to the last Event downloaded
+                lastEvent = list.last()
+            }.addOnFailureListener(onFailure)
     }
 
     suspend fun getUserLikedEvents(): QuerySnapshot? {
