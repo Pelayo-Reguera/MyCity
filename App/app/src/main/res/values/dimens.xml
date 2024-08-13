@@ -19,7 +19,7 @@
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="img_recycler_view_item">40dp</dimen>
-    <dimen name="img_profile_size">180dp</dimen>
+    <dimen name="img_profile_size">160dp</dimen>
     <dimen name="img_sigInprofile_size">125dp</dimen>
     <dimen name="carousel_height">260dp</dimen>img_card
     <dimen name="img_card_height">194dp</dimen>
