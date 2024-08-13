@@ -40,6 +40,13 @@ class UserVM : ViewModel() {
     /** A list of friends containing only their user names and profile photos */
     var friends: MutableList<Pair<String, Drawable>> = mutableListOf()
     val createdEvents: MutableLiveData<MutableList<Event>> = MutableLiveData()
+        get(){
+            userName.value.takeIf { !it.isNullOrBlank() }?.let {username ->
+                RemoteDatabase.getUserCreatedEvents(username, {}, {})
+            }
+
+            return field
+        }
     val likedEvents: MutableLiveData<MutableList<Event>> = MutableLiveData()
     val joinedEvents: MutableLiveData<MutableList<Event>> = MutableLiveData()
     val coins: MutableLiveData<MutableMap<String, Int>> = MutableLiveData()
