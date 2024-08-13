@@ -15,9 +15,9 @@ enum class RemoteDBCollections(val value: String) {
 }
 
 enum class RemoteDBFields(val value: String) {
-    NAME("name"), LOCATION("location"), START_EVENT("startEvent"), GUESTS_CAPACITY("guestsCapacity"),
-    COINS("coins"), EMAIL("email"), ID("id"), BIRTHDATE("birthdate"),
-    GENDER("gender")
+    NAME("name"), LOCATION("location"), START_EVENT("startEvent"), END_EVENT("endEvent"),
+    GUESTS_CAPACITY("guestsCapacity"), ORGANIZERS("organizers"), COINS("coins"), EMAIL("email"),
+    ID("id"), BIRTHDATE("birthdate"), GENDER("gender")
 }
 
 enum class Tags {
