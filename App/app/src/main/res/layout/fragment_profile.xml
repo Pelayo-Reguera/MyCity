@@ -73,24 +73,26 @@
         app:layout_constraintTop_toBottomOf="@+id/imgProfile"
         app:layout_constraintVertical_bias="0.069" />
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabsProfile"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/txtPoints"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgCoin"
-        app:layout_constraintVertical_bias="0.032" />
+        app:layout_constraintVertical_bias="0.9">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/vpProfileContent"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/vp_profile_content"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabsEvent" />
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabsProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top" />
 
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vpProfileContent"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/vp_profile_content"
+            android:layout_gravity="bottom"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
