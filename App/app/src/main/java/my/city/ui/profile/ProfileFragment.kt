@@ -27,7 +27,7 @@ import my.city.databinding.FragmentProfileBinding
 import my.city.logic.viewmodels.UserVM
 
 /**
- * A simple [Fragment] subclass for showing user profile information
+ * A simple [Fragment] for showing user profile information
  * */
 
 //The XMl of the layout is passed as an argument to the Fragment's constructor to create it and
