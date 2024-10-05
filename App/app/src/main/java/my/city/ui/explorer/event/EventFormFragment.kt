@@ -235,13 +235,14 @@ class EventFormFragment : Fragment(R.layout.fragment_event_form), DialogListener
             requestSearch = !text.isNullOrBlank()
             // This 'if' avoids to overload with many requests
             if (!isSearching) {
+                binding.searchResultsView.visibility = View.VISIBLE
                 lifecycleScope.launch(Dispatchers.Default) {
                     makeSearchRequest()
                 }
             }
         }
 
-        txteEventLocation.setOnFocusChangeListener { v, hasFocus ->
+        txteEventLocation.setOnFocusChangeListener { _, hasFocus ->
             binding.searchResultsView.isVisible = hasFocus
         }
 
@@ -265,7 +266,7 @@ class EventFormFragment : Fragment(R.layout.fragment_event_form), DialogListener
 
         txteEventEndDate.setOnClickListener { _ ->
             showDateTimePickers { year: Int, month, day, hour, minute ->
-                val date = LocalDateTime.of(year, month, day, hour, minute)
+                val date = LocalDateTime.of(year, month + 1, day, hour, minute) // January is 0
                 eventVM.endEvent = date
                 txteEventEndDate.setText(
                     date.format(DateTimeFormatter.ofPattern("dd/LL/uuuu - HH:mm"))
@@ -365,8 +366,7 @@ class EventFormFragment : Fragment(R.layout.fragment_event_form), DialogListener
                     // the remote database everything is correct because it depends on eventVM.eventImgURIs
                     // not in the eventVM.eventDrawables
                     eventVM.eventDrawables.removeAt(0)
-                    eventsListVM.addEvent(
-                        Event(
+                    eventsListVM.addEvent(Event(
                             eventVM.name,
                             eventVM.eventDrawables,
                             eventVM.eventImgURIs,
@@ -377,7 +377,7 @@ class EventFormFragment : Fragment(R.layout.fragment_event_form), DialogListener
                                     eventVM.usersFound[s].toString()
                                 }
                             }
-                                .toMutableList(),
+                                    .toMutableList(),
                             eventVM.description,
                             eventVM.challenges,
                             eventVM.location!!,
@@ -385,9 +385,13 @@ class EventFormFragment : Fragment(R.layout.fragment_event_form), DialogListener
                             eventVM.startEvent!!,
                             eventVM.endEvent!!,
                             guestsCapacity = eventVM.guestsCapacity
-                        ),
-                        getString(R.string.msgDialog_createdEvent)
-                    ) { /*Do nothing*/ } //INFO: Improve with local memory persistence
+                    ), getString(R.string.msgDialog_createdEvent)) {
+                        if (!userVm.createdEventsIds.value.isNullOrEmpty()) {
+                            // If the user created events was already download from the database,
+                            // the created event is added to the list to avoid the need to reload them
+                            userVm.createdEventsIds.value?.add(it)
+                        }
+                    } //INFO: Improve with local memory persistence
 
                     findNavController().navigate(
                         EventFormFragmentDirections.toFragmentExplorer()
