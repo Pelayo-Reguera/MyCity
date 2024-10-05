@@ -30,6 +30,7 @@ import com.tomtom.sdk.map.display.style.StandardStyles
 import com.tomtom.sdk.map.display.style.StyleLoadingCallback
 import com.tomtom.sdk.map.display.ui.MapFragment
 import my.city.R
+import my.city.database.Tags
 import my.city.databinding.FragmentMapBinding
 import my.city.logic.viewmodels.EventsListVM
 import my.city.logic.viewmodels.UserVM
@@ -108,7 +109,16 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         val isLogIn = userVM.getUserData({},
             // In case the user is LogIn but an error arose when retrieving the user data, it redirects
             // to the logIn view
-            { findNavController().navigate(MapFragmentDirections.toFragmentLogIn()) })
+                                         {
+                                             when (it) {
+                                                 Tags.PROFILE_PHOTO_FAILURE -> {}
+
+                                                 else -> findNavController().navigate(
+                                                         MapFragmentDirections.toFragmentLogIn()
+                                                 )
+                                             }
+                                         }
+        )
         if (!isLogIn) {
             findNavController().navigate(MapFragmentDirections.toFragmentLogIn())
         } else {
