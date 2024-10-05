@@ -6,7 +6,6 @@
   ~
   ~ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/
   -->
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,5 +15,5 @@
     <include
         android:id="@+id/layout_rvEvents"
         layout="@layout/rv_events" />
-
 </FrameLayout>
+

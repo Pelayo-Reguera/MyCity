@@ -23,12 +23,14 @@ import com.tomtom.sdk.location.GeoPoint
 import my.city.database.RemoteDatabase
 import my.city.database.RemoteStorage
 import my.city.database.Tags
-import my.city.logic.Event
 
 /**
- * It represents all the information of the user currently using the app. Its purpose is to keep the
- * information available in all the application and be a communication channel between the UI and
- * the [database layer][RemoteDatabase]
+ * It represents all the information of the user currently using the app. Its purpose is:
+ *
+ * - To keep the information available in all the application
+ * - To be a communication channel between the UI and the [database layer][RemoteDatabase]
+ * - Manage
+ *
  */
 class UserVM : ViewModel() {
 
@@ -39,16 +41,43 @@ class UserVM : ViewModel() {
 
     /** A list of friends containing only their user names and profile photos */
     var friends: MutableList<Pair<String, Drawable>> = mutableListOf()
-    val createdEvents: MutableLiveData<MutableList<Event>> = MutableLiveData()
-        get(){
-            userName.value.takeIf { !it.isNullOrBlank() }?.let {username ->
-                RemoteDatabase.getUserCreatedEvents(username, {}, {})
+    val createdEventsIds: MutableLiveData<MutableList<String>> = MutableLiveData()
+        get() {// INFO: Update in every call because friends will be able to include the user as
+            //    an organizer of their events (collaborations)
+            userName.value
+                    .takeIf { !it.isNullOrBlank() && field.value.isNullOrEmpty() && isAnonymous.value == false }
+                    ?.let { username ->
+                        RemoteDatabase.getUserCreatedEvents(username, {
+                            field.value = it.toMutableList()
+                        }, {})
             }
 
             return field
         }
-    val likedEvents: MutableLiveData<MutableList<Event>> = MutableLiveData()
-    val joinedEvents: MutableLiveData<MutableList<Event>> = MutableLiveData()
+    val likedEventsIds: MutableLiveData<MutableList<String>> = MutableLiveData()
+        get() {// It is continuously updated
+            userName.value
+                    .takeIf { !it.isNullOrBlank() && field.value.isNullOrEmpty() && isAnonymous.value == false }
+                    ?.let { username ->
+                        RemoteDatabase.getUserLikedEvents(username, {
+                            field.value = it.toMutableList()
+                        }, {})
+                    }
+
+            return field
+        }
+    val joinedEventsIds: MutableLiveData<MutableList<String>> = MutableLiveData()
+        get() {// It is continuously updated
+            userName.value
+                    .takeIf { !it.isNullOrBlank() && field.value.isNullOrEmpty() && isAnonymous.value == false }
+                    ?.let { username ->
+                        RemoteDatabase.getUserJoinedEvents(username, {
+                            field.value = it.toMutableList()
+                        }, {})
+                    }
+
+            return field
+        }
     val coins: MutableLiveData<MutableMap<String, Int>> = MutableLiveData()
     var birthdate: Timestamp = Timestamp.now()
     var gender: String = ""
@@ -302,6 +331,7 @@ class UserVM : ViewModel() {
      * Delete the user's account from the authentications database
      */
     fun deleteAccount() {
+        // TODO
         //INFO: Improve it by deleting or marking for deletion the user data in documents
         Firebase.auth.currentUser?.delete()
     }

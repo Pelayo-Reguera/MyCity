@@ -9,14 +9,12 @@
 package my.city.logic.viewmodels
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import my.city.database.RemoteDatabase
 import my.city.database.RemoteStorage
-import my.city.database.Tags
 import my.city.logic.Event
 
 enum class State {
@@ -32,7 +30,7 @@ class EventsListVM : ViewModel() {
                 // Download the images and load them in the Event
                 // A coroutine for each event is created to make the loading more dynamic
                 viewModelScope.launch {
-                    event.eventImgURIs.lastOrNull()?.let { uri ->
+                    event.eventImgURIs.firstOrNull()?.let { uri ->
                         val segments = Uri.parse(uri).pathSegments
                         val path = segments.joinToString(
                             "/",
@@ -47,13 +45,7 @@ class EventsListVM : ViewModel() {
                 }.invokeOnCompletion {
                     field.value = list
                 }
-            }, {
-                Log.e(
-                    Tags.REMOTE_DATABASE_ERROR.toString(),
-                    "There was a problem downloading the published events",
-                    it
-                )
-            })
+            }, { })
             return field
         }
 
@@ -69,7 +61,7 @@ class EventsListVM : ViewModel() {
      *  @param message The message to show to the user if desired
      *  @param onSuccess Actions to do in case the event was successfully stored
      * */
-    fun addEvent(event: Event, message: String, onSuccess: () -> Unit) {
+    fun addEvent(event: Event, message: String, onSuccess: (String) -> Unit) {
         val list = events.value ?: mutableListOf()
         list.add(event)
         this.message.value = message
@@ -79,10 +71,20 @@ class EventsListVM : ViewModel() {
         viewModelScope.launch {
             RemoteDatabase.createEvent(event.copy(), {
                 processState = State.SUCCESS
-                onSuccess()
+                onSuccess(it)
             }, {
                 processState = State.FAILURE
             })
         }
+    }
+
+    /**
+     * Request information of an specified event to the database
+     *
+     * @param eventId The unique identifier of the event
+     * @param onSuccess Actions to do with the [Event] requested
+     * */
+    fun getEventInfo(eventId: String, onSuccess: (Event) -> Unit) {
+        RemoteDatabase.getEvent(eventId, onSuccess) { /*Nothing on failure*/ }
     }
 }

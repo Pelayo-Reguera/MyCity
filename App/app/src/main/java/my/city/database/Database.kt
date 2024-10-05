@@ -13,11 +13,9 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.GeoPoint
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.tasks.await
 import my.city.logic.Challenge
 import my.city.logic.Event
 import my.city.logic.User
@@ -37,74 +35,86 @@ object RemoteDatabase {
     /** This property is used for limit the number of results of events*/
     private var maxNResults: Long = 50
 
-    fun getUserCreatedEvents(username: String, onSuccess: (List<Event>) -> Unit, onFailure: (Tags) -> Unit) {
+    /**
+     * It requests all the event IDs created by the specified user
+     *
+     *  @param username The one when the account was created
+     *  @param onSuccess Actions to do when the events' list was successfully collected
+     *  @param onFailure Actions to do in case it was not possible to complete the request
+     * */
+    fun getUserCreatedEvents(
+        username: String,
+        onSuccess: (List<String>) -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
         val db = Firebase.firestore
         db.collection(RemoteDBCollections.EVENTS.value)
             .whereGreaterThan(RemoteDBFields.END_EVENT.value, Timestamp.now())
             .whereArrayContains(RemoteDBFields.ORGANIZERS.value, username)
             .orderBy(RemoteDBFields.START_EVENT.value).get()
-            .addOnSuccessListener {
-                onSuccess(it)
-                for (document in it.documents) {
-                    // For each document, convert it to an Event and request its challenges and execute onSuccess
-                    try {
-                        //TODO: Check if it's already ddownloaded if not downloaded. Use events' ids
-                        document.toObject<Event>()?.let { event ->
-                            event.id = document.id
-                            list.add(event)
-                            getChallenges(event, onFailure)
-                            onSuccess(list, event)
-                        }
-                    } catch (re: RuntimeException) {
-                        Log.e(
+                .addOnSuccessListener { onSuccess(it.documents.map { document -> document.id }) }
+                .addOnFailureListener {
+                    Log.e(
                             Tags.REMOTE_DATABASE_ERROR.toString(),
-                            "An object of type Event is not well constructed in the database"
-                        )
-                    }
+                            "There was a problem when requesting the user created events",
+                            it
+                    )
+                    onFailure(Tags.REMOTE_DATABASE_ERROR)
                 }
-                previousList.value = list
-            }.addOnFailureListener { onFailure() }//TODO: Pass the events list
-
-
-        db.collection(RemoteDBCollections.EVENTS.value)
-            .orderBy(RemoteDBFields.START_EVENT.value)
-            .startAfter(lastEvent?.startEvent).limit(maxNResults).get().addOnSuccessListener {
-                val list: MutableList<Event> = previousList.value ?: mutableListOf()
-                for (document in it.documents) {
-                    // For each document, convert it to an Event and request its challenges and execute onSuccess
-                    try {
-                        document.toObject<Event>()?.let { event ->
-                            event.id = document.id
-                            list.add(event)
-                            getChallenges(event, onFailure)
-                            onSuccess(list, event)
-                        }
-                    } catch (re: RuntimeException) {
-                        Log.e(
-                            Tags.REMOTE_DATABASE_ERROR.toString(),
-                            "An object of type Event is not well constructed in the database"
-                        )
-                    }
-                }
-                previousList.value = list
-
-                // Update the reference to the last Event downloaded
-                lastEvent = list.last()
-            }.addOnFailureListener(onFailure)
     }
 
-    suspend fun getUserLikedEvents(): QuerySnapshot? {
+    /**
+     * It requests all the event IDs the specified user likes
+     *
+     *  @param username The one when the account was created
+     *  @param onSuccess Actions to do when the events' list was successfully collected
+     *  @param onFailure Actions to do in case it was not possible to complete the request
+     * */
+    fun getUserLikedEvents(
+        username: String,
+        onSuccess: (List<String>) -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
         val db = Firebase.firestore
-        //TODO: Change the hardcoded string in the document path
-        return db.collection(RemoteDBCollections.USERS.value).document("admin")
-            .collection(RemoteDBCollections.LIKED_EVENTS.value).get().await()
+        db.collection(RemoteDBCollections.USERS.value)
+                .document(username)
+                .collection(RemoteDBCollections.LIKED_EVENTS.value).get()
+                .addOnSuccessListener { onSuccess(it.documents.map { document -> document.id }) }
+                .addOnFailureListener {
+                    Log.e(
+                            Tags.REMOTE_DATABASE_ERROR.toString(),
+                            "There was a problem when requesting the user liked events",
+                            it
+                    )
+                    onFailure(Tags.REMOTE_DATABASE_ERROR)
+                }
     }
 
-    suspend fun getUserJoinedEvents(): QuerySnapshot? {
+    /**
+     * It requests all the event IDs the specified user has joined until the moment
+     *
+     *  @param username The one when the account was created
+     *  @param onSuccess Actions to do when the events' list was successfully collected
+     *  @param onFailure Actions to do in case it was not possible to complete the request
+     * */
+    fun getUserJoinedEvents(
+        username: String,
+        onSuccess: (List<String>) -> Unit,
+        onFailure: (Tags) -> Unit,
+    ) {
         val db = Firebase.firestore
-        //TODO: Change the hardcoded string in the document path
-        return db.collection(RemoteDBCollections.USERS.value).document("admin")
-            .collection(RemoteDBCollections.JOINED_EVENTS.value).get().await()
+        db.collection(RemoteDBCollections.USERS.value)
+                .document(username)
+                .collection(RemoteDBCollections.JOINED_EVENTS.value).get()
+                .addOnSuccessListener { onSuccess(it.documents.map { document -> document.id }) }
+                .addOnFailureListener {
+                    Log.e(
+                            Tags.REMOTE_DATABASE_ERROR.toString(),
+                            "There was a problem when requesting the user joined events",
+                            it
+                    )
+                    onFailure(Tags.REMOTE_DATABASE_ERROR)
+                }
     }
 
     /**
@@ -426,13 +436,13 @@ object RemoteDatabase {
      *  100
      *
      *  @param previousList The list whose value will be updated
-     *  @param onSuccess Actions to do when the query was ok
+     *  @param onSuccess Actions to do when the query was ok for each document in the result
      *  @param onFailure Actions to do when an error arose
      * */
     fun getEvents(
         previousList: MutableLiveData<MutableList<Event>>,
         onSuccess: (MutableList<Event>, Event) -> Unit,
-        onFailure: (Exception) -> Unit,
+        onFailure: (Tags) -> Unit,
     ) {
         val db = Firebase.firestore
         db.collection(RemoteDBCollections.EVENTS.value)
@@ -450,7 +460,7 @@ object RemoteDatabase {
                         }
                     } catch (re: RuntimeException) {
                         Log.e(
-                            Tags.REMOTE_DATABASE_ERROR.toString(),
+                                Tags.EVENT_DOCUMENT_ERROR.toString(),
                             "An object of type Event is not well constructed in the database"
                         )
                     }
@@ -459,7 +469,40 @@ object RemoteDatabase {
 
                 // Update the reference to the last Event downloaded
                 lastEvent = list.last()
-            }.addOnFailureListener(onFailure)
+                }.addOnFailureListener {
+                    Log.e(
+                            Tags.REMOTE_DATABASE_ERROR.toString(),
+                            "There was a problem downloading the published events",
+                            it
+                    )
+                    onFailure(Tags.REMOTE_DATABASE_ERROR)
+                }
+    }
+
+    /**
+     * Retrieves the information of the specified Event
+     *
+     *  @param id Event's unique identifier
+     *  @param onSuccess Actions to do when the query was successful
+     *  @param onFailure Actions to do when an error arose
+     * */
+    fun getEvent(id: String, onSuccess: (Event) -> Unit, onFailure: (Tags) -> Unit) {
+        val db = Firebase.firestore
+        db.collection(RemoteDBCollections.EVENTS.value).document(id).get().addOnSuccessListener {
+            try {
+                it.toObject<Event>()?.let { event ->
+                    event.id = it.id
+                    getChallenges(event, onFailure)
+                    onSuccess(event)
+                }
+            } catch (re: RuntimeException) {
+                Log.e(
+                        Tags.EVENT_DOCUMENT_ERROR.toString(),
+                        "An object of type Event is not well constructed in the database"
+                )
+                onFailure(Tags.EVENT_DOCUMENT_ERROR)
+            }
+        }
     }
 
     /**
@@ -470,7 +513,7 @@ object RemoteDatabase {
      * */
     private fun getChallenges(
         event: Event,
-        onFailure: (Exception) -> Unit,
+        onFailure: (Tags) -> Unit,
     ) {
         val db = Firebase.firestore
         db.collection(RemoteDBCollections.EVENTS.value).document(event.id)
@@ -488,7 +531,13 @@ object RemoteDatabase {
                         )
                     }
                 }
-            }.addOnFailureListener { onFailure(it) }
+                }.addOnFailureListener {
+                    Log.w(
+                            Tags.CHALLENGE_DOCUMENT_ERROR.toString(),
+                            "There was an error requesting the challenges of the event ${event.id}"
+                    )
+                    onFailure(Tags.CHALLENGE_DOCUMENT_ERROR)
+                }
     }
 
     /**
@@ -515,12 +564,12 @@ object RemoteDatabase {
     /**
      * Creates an [Event] in the database
      *
-     *  @param onSuccess Actions to do when the query was ok
+     *  @param onSuccess Actions to do with the created id of the event document
      *  @param onFailure Actions to do when an error arose
      * */
     suspend fun createEvent(
         event: Event,
-        onSuccess: () -> Unit,
+        onSuccess: (String) -> Unit,
         onFailure: (Tags) -> Unit,
     ) {
         val db = Firebase.firestore
@@ -540,7 +589,7 @@ object RemoteDatabase {
                             challenge
                         )
                     }
-                }.addOnSuccessListener { onSuccess() }.addOnFailureListener {
+                }.addOnSuccessListener { onSuccess(doc.id) }.addOnFailureListener {
                     Log.e(
                         Tags.REMOTE_DATABASE_ERROR.toString(),
                         "There was a problem creating the event",

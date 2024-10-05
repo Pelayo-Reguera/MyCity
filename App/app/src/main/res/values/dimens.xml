@@ -35,6 +35,4 @@
     <dimen name="anim_dialog_icon_size">96dp</dimen>
     <dimen name="anim_dialog_minSize">280dp</dimen>
     <dimen name="anim_dialog_maxSize">560dp</dimen>
-    <dimen name="vp_profile_content">385dp</dimen>
-
 </resources>
