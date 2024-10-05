@@ -56,6 +56,7 @@ class ExplorerAdapter(
                     .format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
             txtDescription.text = event.street
 
+            // If the user is not anonymous it can join events and save them as favourites
             if (!isAnonymous) {//INFO: Improve by showing a message of an internet connection error
                 icbtnLikeEvent.visibility = FloatingActionButton.VISIBLE
                 icbtnLikeEvent.setOnClickListener {

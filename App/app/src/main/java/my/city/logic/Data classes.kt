@@ -68,7 +68,7 @@ data class Event(
 ) {
 
     @Exclude
-    var id: String = "fake"
+    var id: String = "fakeId"
         @Exclude get
         @Exclude set
     lateinit var name: String

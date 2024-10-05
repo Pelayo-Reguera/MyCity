@@ -55,8 +55,7 @@ class ExplorerEventsFragment : Fragment(R.layout.fragment_events_explorer) {
             addSource(userVM.isAnonymous) {
                 binding.fabCreateEvent.isEnabled = !it
                 eventsListVM.events.value?.let { list ->
-                    value =
-                        Pair(list, it)
+                    value = Pair(list, it)
                 }
             }
         }

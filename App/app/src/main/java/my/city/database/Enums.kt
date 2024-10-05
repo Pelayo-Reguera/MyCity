@@ -29,8 +29,8 @@ enum class Tags {
     PROFILE_PHOTO_FAILURE,
 
     // Document errors
-    /** An error generated when either uploading the user information or downloading it. The app shouldn't
-     * advance and request the user to try again*/
+    /** An error generated when either uploading the user information or downloading it. The app should
+     * request the user to try again and not advance*/
     PROFILE_DOCUMENT_ERROR,
     EVENT_DOCUMENT_ERROR,
     CHALLENGE_DOCUMENT_ERROR,
